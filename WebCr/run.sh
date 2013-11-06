@@ -1,1 +1,1 @@
-sh java -jar dist\CrawlerEngine.jar
+sh java -jar dist\WebCr.jar
