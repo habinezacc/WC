@@ -25,15 +25,14 @@ package crawler;
 //		LoadPage(URL u);
 //		Crawl(String[] s );
 //////////////////////////////////////////////////////////////////////////////////////////////
-import gui.Canvas;
 import java.util.*;
 import java.net.*;
 import java.io.*;
 
-public class CrawlerEngine extends Thread {
+public class CrawlerEngine {
     // Global Variables
 
-    private SearchT st = new SearchT();
+    private SearchHashMap st = new SearchHashMap();
     public String results = new String();
     public static final int MAX_PAGES = 20;		// Default maxiumum pages
     public static final boolean DEBUG = false;		// This can be used to enable or disable
@@ -111,7 +110,6 @@ public class CrawlerEngine extends Thread {
         System.out.println("Maximum number of pages::" + maxPages);
 
         //Set the proxy and port - important for firewalls
-
         Properties props = new Properties(System.getProperties());
         props.put("http.proxySet", "true");
         props.put("http.proxyHost", "webcache-cup");
@@ -159,7 +157,6 @@ public class CrawlerEngine extends Thread {
 
             // Something is wrong with the host - to be safe we mark it as unsafe
             // or assume that this side "disallows" crawling
-
             return false;
 
         } // try
@@ -199,7 +196,6 @@ public class CrawlerEngine extends Thread {
         // OK we found a robots.txt file and read it into the strCommands data structure.
         // We will assume that this robots.txt applies to us just to be on the safe side.
         // Next we will parse the file and search for the "Disallow:" string.
-
         String strURL = url.getFile();
         int index = 0;
 
@@ -258,8 +254,6 @@ public class CrawlerEngine extends Thread {
                 if ((iSuffix == filename.length() - 3) || (iSuffix == filename.length() - 4)) {
                     knownURLs.put(url, new Integer(1));
                     newURLs.addElement(url);
-                    store(url);
-
                     System.out.println("Found new URL " + url.toString());
 
                 } // if
@@ -270,30 +264,22 @@ public class CrawlerEngine extends Thread {
 
     }
 
-    public void store(URL url) {
-        BufferedReader in;
-        String line;
-        String[] l;
+    public void store(URL url, String content) {
+        String[] words;
 
         String temp;
-        try {
-            //out = new fileWriter("test.txt");
-            in = new BufferedReader(new InputStreamReader(url.openStream()));
-            while ((line = in.readLine()) != null) {
-                l = line.split(" ");
-                for (int i = 0; i < l.length; i++) {
-                    temp = l[i].trim();
-                    if (!(temp.equals(""))) {
-                        temp = temp.replace("\\W$", " ");
-                        st.addString(temp, url);
-                    }
-                }
+        words = content.split(" ");
+        for (String word : words) {
+            temp = word.trim();
+            if (!(temp.equals(""))) {
+                temp = temp.replace("\\W$", " ");
+                st.addString(temp, url);
             }
-            in.close();
-        } catch (IOException e) {
         }
 
-    }// AddNewUrl Method
+    }
+
+// AddNewUrl Method
 
     //////////////////////////////////////////////////////////////////////////
     //	METHOD:: LoadPage(URL url)
@@ -320,7 +306,6 @@ public class CrawlerEngine extends Thread {
             // OK, now we will read in the entire file or page pointed by "url."
             // There is a maximum file size that can be read in that is established
             // by MAX_FILE_SIZE.
-
             byte b[] = new byte[1000];
             int numRead = urlStream.read(b);
             String content = new String(b, 0, numRead);
@@ -336,7 +321,7 @@ public class CrawlerEngine extends Thread {
                 } // if
 
             } // while
-
+            store(url, content);
             return content;
 
         } catch (IOException e) {
@@ -413,18 +398,15 @@ public class CrawlerEngine extends Thread {
     //	Returns: void
     //
     ///////////////////////////////////////////////////////////////////////////
-    public void Crawl() {
-        String[] argv = {"http://textfiles.com", "2"};
+    public void Crawl(String[] argv) {
+         //= {"http://textfiles.com", "2"};
         if (Initialize(argv)) {
             for (int i = 0; i < maxPages; i++) {
                 URL url = (URL) newURLs.elementAt(0);
                 newURLs.removeElementAt(0);
 
                 if (DEBUG) {
-
                     System.out.println("Searching " + url.toString());
-
-
                 }
 
                 if (RobotSafe(url)) {
@@ -446,7 +428,6 @@ public class CrawlerEngine extends Thread {
                 } else {
 
                     System.out.println("URL Disallowed::" + url.toString());
-
 
                 } // if
 
@@ -474,20 +455,11 @@ public class CrawlerEngine extends Thread {
                 System.out.println("Done");
 
             } catch (IOException e) {
-                e.printStackTrace();
             }
-
-            System.out.println("THE in " + cashe.get("the"));
             System.out.println("Search complete.");
-
-
 
         } // if
 
-    }
-
-    public void run() {
-        Crawl();
     }
 
     public HashMap getCache() {
