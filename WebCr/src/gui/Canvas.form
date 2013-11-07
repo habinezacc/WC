@@ -171,7 +171,7 @@
         <Component class="javax.swing.JProgressBar" name="jProgressBar1">
           <Properties>
             <Property name="toolTipText" type="java.lang.String" value=""/>
-            <Property name="value" type="int" value="30"/>
+            <Property name="string" type="java.lang.String" value="0"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jProgressBar1StateChanged"/>

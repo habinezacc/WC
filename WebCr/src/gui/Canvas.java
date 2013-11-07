@@ -4,15 +4,11 @@
  */
 package gui;
 
-import crawler.CrawlerEngine;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -93,7 +89,7 @@ public class Canvas extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTextArea2);
 
         jProgressBar1.setToolTipText("");
-        jProgressBar1.setValue(30);
+        jProgressBar1.setString("0");
         jProgressBar1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jProgressBar1StateChanged(evt);
@@ -242,12 +238,9 @@ public class Canvas extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-
-
         keyWord = jTextField3.getText();
         jTextArea2.setText(searchFile("cache.txt", keyWord));
         repaint();
-        jPanel1.setVisible(false);
         jTextArea2.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
