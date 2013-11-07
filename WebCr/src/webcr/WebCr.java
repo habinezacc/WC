@@ -24,6 +24,6 @@ public class WebCr {
             args[1] = "2";
         }
         CrawlerEngine wc = new CrawlerEngine();
-        wc.Crawl(args);
+        wc.Crawl();
     }
 }

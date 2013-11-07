@@ -7,7 +7,7 @@
 package test;
 
 import java.net.MalformedURLException;
-import crawler.SearchT;
+import crawler.SearchHashMap;
 import java.net.URL;
 
 /**
@@ -18,10 +18,11 @@ public class TestHarness {
 
     /**
      * @param args the command line arguments
+     * @throws java.net.MalformedURLException
      */
     public static void main2(String[] args) throws MalformedURLException {
         // TODO code application logic here
-       SearchT smap = new SearchT();
+       SearchHashMap smap = new SearchHashMap();
        smap.addString("today",new URL("http://www.today.com"));
        smap.addString("today",new URL("http://www.today.com"));
        smap.addString("today",new URL("http://www.today.com"));

@@ -398,8 +398,8 @@ public class CrawlerEngine {
     //	Returns: void
     //
     ///////////////////////////////////////////////////////////////////////////
-    public void Crawl(String[] argv) {
-         //= {"http://textfiles.com", "2"};
+    public void Crawl(){
+        String[] argv = {"http://textfiles.com", "2"};
         if (Initialize(argv)) {
             for (int i = 0; i < maxPages; i++) {
                 URL url = (URL) newURLs.elementAt(0);
@@ -444,6 +444,7 @@ public class CrawlerEngine {
 
                 FileWriter fw = new FileWriter(file.getAbsoluteFile());
                 BufferedWriter bw = new BufferedWriter(fw);
+                
                 for (String key : keyset) {
                     bw.write(key + "###" + cashe.get(key) + "\n");
                     System.out.println(key + "###" + cashe.get(key));

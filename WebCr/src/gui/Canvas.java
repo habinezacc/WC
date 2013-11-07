@@ -3,12 +3,13 @@
  * and open the template in the editor.
  */
 package gui;
-
+import crawler.SearchHashMap;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,7 +97,7 @@ public class Canvas extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel2.setText("Search in progress, please wait ...");
 
@@ -237,41 +238,71 @@ public class Canvas extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+        jProgressBar1.setValue(0);
         keyWord = jTextField3.getText();
         jTextArea2.setText(searchFile("cache.txt", keyWord));
         repaint();
         jTextArea2.setVisible(true);
+        new Thread() {
+            public void run() {
+                for (int i = 0; i <= 100; i++) {
+                    try {
+                        sleep(60);
+                        jProgressBar1.setValue(i);
+
+                        if (jProgressBar1.getValue() <= 99) {
+                            jLabel2.setText("Search in progress, please wait ...");
+                        } else {
+                            jLabel2.setText("Search complete!");
+                        }
+
+                    } catch (InterruptedException ex) {
+
+                    }
+
+                }
+
+            }
+
+        }.start();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jProgressBar1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jProgressBar1StateChanged
         // TODO add your handling code here:
     }//GEN-LAST:event_jProgressBar1StateChanged
     private String searchFile(String file, String keyWord) {
-        BufferedReader reader = null;
+        Set<String> contentSet;
+        BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(file));
-            String line = null;
+            String line;
+            SearchHashMap shm = new SearchHashMap();
             String[] lineContent;
             try {
                 while ((line = reader.readLine()) != null) {
                     lineContent = line.split("###");
-                    if(lineContent[0].equals(keyWord))
+                    if (lineContent[0].equals(keyWord)) {
+                        lineContent[1] = lineContent[1].replace("[", "");
+                        lineContent[1] = lineContent[1].replace("]", "");
+                        //contentSet = (Set<String>) Arrays.asList(lineContent[1].split(","));
+                        //shm.printSetString(contentSet);
                         return lineContent[1];
+                    }
                 }
-                 reader.close();
+                reader.close();
             } catch (IOException ex) {
                 Logger.getLogger(Canvas.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Canvas.class.getName()).log(Level.SEVERE, null, ex);
-        } return null;
+        }
+        return null;
     }
 
-/**
- * @param args the command line arguments
- */
+    /**
+     * @param args the command line arguments
+     */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

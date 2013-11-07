@@ -6,14 +6,20 @@
 
 package crawler;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author chabineza
  */
 public class SearchDocument {
     
-    public SearchDocument(){
+    public SearchDocument(String s){
     
     }
-    
+    public Set<String> searchTwoWords(String word1, String word2){
+        Set<String> result = new HashSet<>();
+        return result;
+    }
 }
