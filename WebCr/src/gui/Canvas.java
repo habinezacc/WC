@@ -3,15 +3,17 @@
  * and open the template in the editor.
  */
 package gui;
-import crawler.SearchHashMap;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import webcr.HashSerializer;
 
 /**
  *
@@ -24,23 +26,12 @@ public class Canvas extends javax.swing.JFrame {
      *
      */
     public HashMap cashe = new HashMap();
-    ;
-        
-    private String url;
     private String keyWord;
 
     public Canvas() {
         initComponents();
         this.jPanel1.setVisible(true);
-
-        this.jTextField2.setText("http://textfiles.com");
-        jTextField1.setVisible(false);
-        jLabel3.setVisible(false);
-
-    }
-
-    public String getUrl() {
-        return this.url;
+        this.urlTextField.setText("http://textfiles.com");
     }
 
     /**
@@ -52,54 +43,45 @@ public class Canvas extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField2 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        urlTextField = new javax.swing.JTextField();
+        searchKeyWordLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        progressBar = new javax.swing.JProgressBar();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        indexSearchButton = new javax.swing.JRadioButton();
+        documentSearchButton = new javax.swing.JRadioButton();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        keyWordField = new javax.swing.JTextField();
+        urlLabel = new javax.swing.JLabel();
+        searchButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        outPutTextPane = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextField2.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        urlTextField.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        urlTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setText("Search String");
-        jLabel1.setFocusCycleRoot(true);
-        jLabel1.setFocusTraversalPolicyProvider(true);
+        searchKeyWordLabel.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
+        searchKeyWordLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        searchKeyWordLabel.setText("Search String");
+        searchKeyWordLabel.setFocusCycleRoot(true);
+        searchKeyWordLabel.setFocusTraversalPolicyProvider(true);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
-        jTextArea2.setRows(5);
-        jTextArea2.setBorder(null);
-        jScrollPane2.setViewportView(jTextArea2);
-
-        jProgressBar1.setToolTipText("");
-        jProgressBar1.setString("0");
-        jProgressBar1.addChangeListener(new javax.swing.event.ChangeListener() {
+        progressBar.setToolTipText("");
+        progressBar.setString("0");
+        progressBar.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jProgressBar1StateChanged(evt);
+                progressBarStateChanged(evt);
             }
         });
 
         jLabel2.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("Search in progress, please wait ...");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -108,37 +90,26 @@ public class Canvas extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel3.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
-        jLabel3.setText("Number of levels");
-        jLabel3.setToolTipText("");
+        indexSearchButton.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
+        indexSearchButton.setText("Index Search");
 
-        jTextField1.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        documentSearchButton.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
+        documentSearchButton.setSelected(true);
+        documentSearchButton.setText("Document Search");
+        documentSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-
-        jRadioButton1.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
-        jRadioButton1.setText("Index Search");
-
-        jRadioButton2.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
-        jRadioButton2.setSelected(true);
-        jRadioButton2.setText("Document Search");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                documentSearchButtonActionPerformed(evt);
             }
         });
 
@@ -146,18 +117,21 @@ public class Canvas extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setText("Search Type");
 
-        jTextField3.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        keyWordField.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
 
-        jLabel5.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
-        jLabel5.setText("Web page URL");
+        urlLabel.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
+        urlLabel.setText("Web page URL");
 
-        jButton1.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
-        jButton1.setText("Search");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        searchButton.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        searchButton.setText("Search");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                searchButtonActionPerformed(evt);
             }
         });
+
+        outPutTextPane.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
+        jScrollPane1.setViewportView(outPutTextPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -165,63 +139,56 @@ public class Canvas extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 654, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(searchKeyWordLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                                    .addComponent(urlLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
+                                    .addComponent(urlTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(indexSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(27, 27, 27)
-                                        .addComponent(jRadioButton2)
+                                        .addComponent(documentSearchButton)
                                         .addGap(23, 23, 23))
-                                    .addComponent(jTextField3))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34))
+                                    .addComponent(keyWordField))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(11, 11, 11)
+                .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton2)
+                    .addComponent(indexSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(documentSearchButton)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(urlLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
+                    .addComponent(searchKeyWordLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(keyWordField, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(searchButton)
+                .addGap(18, 37, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jLabel1.getAccessibleContext().setAccessibleDescription("searchStr");
+        searchKeyWordLabel.getAccessibleContext().setAccessibleDescription("searchStr");
 
         pack();
         setLocationRelativeTo(null);
@@ -230,72 +197,95 @@ public class Canvas extends javax.swing.JFrame {
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
         // TODO add your handling code here:
-        url = jTextField1.getText();
+
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documentSearchButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    }//GEN-LAST:event_documentSearchButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        jProgressBar1.setValue(0);
-        keyWord = jTextField3.getText();
-        jTextArea2.setText(searchFile("cache.txt", keyWord));
-        repaint();
-        jTextArea2.setVisible(true);
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        progressBar.setValue(0);
+        keyWord = keyWordField.getText();
+
+        outPutTextPane.setVisible(true);
         new Thread() {
             public void run() {
                 for (int i = 0; i <= 100; i++) {
                     try {
-                        sleep(60);
-                        jProgressBar1.setValue(i);
+                        sleep(6);
+                        progressBar.setValue(i);
 
-                        if (jProgressBar1.getValue() <= 99) {
+                        if (progressBar.getValue() <= 99) {
                             jLabel2.setText("Search in progress, please wait ...");
                         } else {
                             jLabel2.setText("Search complete!");
+                            HashSerializer hsr = new HashSerializer();
+                            HashMap<String, Set<URL>> hm = (HashMap<String, Set<URL>>) hsr.deSerialize("cash.ser");
+                            for (URL url : hm.get(keyWord)) {
+                                appendURLtoPane(url);
+
+                            }
+                            // outPutTextPane.setText(out);
                         }
 
                     } catch (InterruptedException ex) {
-
+                        System.out.println("Something went wrong with the progress bar \n" + ex);
                     }
-
                 }
 
             }
 
-        }.start();
-    }//GEN-LAST:event_jButton1ActionPerformed
+            private void appendURLtoPane(URL url) {
+                try {
+                    Document doc = outPutTextPane.getDocument();
+                    doc.insertString(doc.getLength(), url.toString() + '\n', null);
+                } catch (BadLocationException exc) {
+                    exc.printStackTrace();
+                }
+                
+//                JLabel l = new JLabel(url.toString() + "</br>");
+//                l.setAlignmentX(0.0f);
+//                l.setFont(outPutTextPane.getFont());
+//                l.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//                l.addMouseListener(new MouseAdapter() {
+//                    public void mouseClicked(MouseEvent me) {
+//                        // your code
+//                    }
+//                });
+//                outPutTextPane.insertComponent(l);
+            }
 
-    private void jProgressBar1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jProgressBar1StateChanged
+        }.start();
+    }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void progressBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_progressBarStateChanged
         // TODO add your handling code here:
-    }//GEN-LAST:event_jProgressBar1StateChanged
+    }//GEN-LAST:event_progressBarStateChanged
     private String searchFile(String file, String keyWord) {
         Set<String> contentSet;
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(file));
             String line;
-            SearchHashMap shm = new SearchHashMap();
             String[] lineContent;
             try {
                 while ((line = reader.readLine()) != null) {
                     lineContent = line.split("###");
                     if (lineContent[0].equals(keyWord)) {
-                        lineContent[1] = lineContent[1].replace("[", "");
-                        lineContent[1] = lineContent[1].replace("]", "");
-                        //contentSet = (Set<String>) Arrays.asList(lineContent[1].split(","));
-                        //shm.printSetString(contentSet);
+
                         return lineContent[1];
                     }
                 }
                 reader.close();
             } catch (IOException ex) {
-                Logger.getLogger(Canvas.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("!! file not found ! " + ex);
+                ex.printStackTrace();
             }
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Canvas.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+
         }
         return null;
     }
@@ -304,24 +294,23 @@ public class Canvas extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JRadioButton documentSearchButton;
+    private javax.swing.JRadioButton indexSearchButton;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField keyWordField;
+    private javax.swing.JTextPane outPutTextPane;
+    private javax.swing.JProgressBar progressBar;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JLabel searchKeyWordLabel;
+    private javax.swing.JLabel urlLabel;
+    private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables
 
     public void setCache(HashMap c) {
         cashe = c;
     }
+
 }

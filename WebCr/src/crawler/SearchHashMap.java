@@ -3,7 +3,6 @@ package crawler;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 /*
@@ -55,7 +54,7 @@ public class SearchHashMap {
             System.out.println(url.toString());
         }
     }
-
+    
     public void printSetString(Set<String> contentSet) {
         for (String url : contentSet) {
             System.out.println(url.toString());

@@ -25,13 +25,14 @@ package crawler;
 //		LoadPage(URL u);
 //		Crawl(String[] s );
 //////////////////////////////////////////////////////////////////////////////////////////////
+import webcr.HashSerializer;
 import java.util.*;
 import java.net.*;
 import java.io.*;
 
-public class CrawlerEngine {
+public class CrawlerEngine implements java.io.Serializable {
     // Global Variables
-
+    
     private SearchHashMap st = new SearchHashMap();
     public String results = new String();
     public static final int MAX_PAGES = 20;		// Default maxiumum pages
@@ -45,6 +46,7 @@ public class CrawlerEngine {
     Hashtable knownURLs;		// This table contains the list of known URLs
     int maxPages;		        // This is the maximum number of pages to crawl
 
+     
     ///////////////////////////////////////////////////////////////////////////
     //	METHOD:: Initialize(String[] argv)
     //	Arguments:
@@ -249,14 +251,15 @@ public class CrawlerEngine {
 
             if (!knownURLs.containsKey(url)) {
                 String filename = url.getFile();
+                if(filename.contains("txt")) System.out.println("\t" + filename);
                 int iSuffix = filename.lastIndexOf("htm");
 
-                if ((iSuffix == filename.length() - 3) || (iSuffix == filename.length() - 4)) {
+              if ((iSuffix == filename.length() - 3) || (iSuffix == filename.length() - 4)) {
                     knownURLs.put(url, new Integer(1));
                     newURLs.addElement(url);
                     System.out.println("Found new URL " + url.toString());
 
-                } // if
+              }// if
             } // if
 
         } catch (MalformedURLException e) {
@@ -383,6 +386,45 @@ public class CrawlerEngine {
         } // while
 
     } // ProcessPage method
+    
+    public LinkedList ProcessPageForIndex(URL url, String page) {
+        LinkedList indices = new LinkedList();
+
+        String lcPage = page.toLowerCase(); 	// Convert all text in the page to lower case.
+        int index = 0; 							// Character position in the page.
+        int iEndAngle, ihref, iURL,
+                iCloseQuote, iHatchMark, iEnd;		// Key token characters for parsing
+
+        while ((index = lcPage.indexOf("<a", index)) != -1) {
+            iEndAngle = lcPage.indexOf(">", index);
+            ihref = lcPage.indexOf("href", index);
+            if (ihref != -1) {
+                iURL = lcPage.indexOf("\"", ihref) + 1;
+
+                if ((iURL != -1) && (iEndAngle != -1) && (iURL < iEndAngle)) {
+                    iCloseQuote = lcPage.indexOf("</b>", iURL);
+                    iHatchMark = lcPage.indexOf("#", iURL);
+
+                    if ((iCloseQuote != -1) && (iCloseQuote < iEndAngle)) {
+                        iEnd = iCloseQuote;
+
+                        if ((iHatchMark != -1) && (iHatchMark < iCloseQuote)) {
+                            iEnd = iHatchMark;
+                        }
+
+                        String newUrlString = page.substring(iURL, iEnd);
+                        indices.add(newUrlString);
+
+                    } // if
+                } // if
+            } // if
+
+            index = iEndAngle;
+
+        } // while
+        return indices;
+    } 
+      
 
     //////////////////////////////////////////////////////////////////////////
     //	METHOD:: Crawl(String[] argv)
@@ -399,7 +441,7 @@ public class CrawlerEngine {
     //
     ///////////////////////////////////////////////////////////////////////////
     public void Crawl(){
-        String[] argv = {"http://textfiles.com", "2"};
+        String[] argv = {"http://textfiles.com", "10"};
         if (Initialize(argv)) {
             for (int i = 0; i < maxPages; i++) {
                 URL url = (URL) newURLs.elementAt(0);
@@ -419,6 +461,11 @@ public class CrawlerEngine {
 
                     if (page.length() != 0) {
                         ProcessPage(url, page);
+
+                        Iterator iter = ProcessPageForIndex(url, page).iterator();
+                        while(iter.hasNext()){                        
+                            System.out.println(" ++++++++++++++++++++++++++++++++++++++++++++++++++++++" + iter.next());
+                        }
                     }
 
                     if (newURLs.isEmpty()) {
@@ -447,7 +494,7 @@ public class CrawlerEngine {
                 
                 for (String key : keyset) {
                     bw.write(key + "###" + cashe.get(key) + "\n");
-                    System.out.println(key + "###" + cashe.get(key));
+                    //System.out.println(key + "###" + cashe.get(key));
                     results += key + " : " + cashe.get(key) + "\n";
                 }
 
@@ -458,14 +505,12 @@ public class CrawlerEngine {
             } catch (IOException e) {
             }
             System.out.println("Search complete.");
-
+            HashSerializer sr = new HashSerializer();
+            sr.serialize(st.getHashMap(), "cash");
         } // if
 
     }
-
-    public HashMap getCache() {
-        return st.getHashMap();
-    }
+   
     // Crawl
     //////////////////////////////////////////////////////////////////////////
     //	METHOD:: main(String[] argv)
