@@ -31,9 +31,12 @@ import java.net.*;
 import java.io.*;
 
 public class CrawlerEngine implements java.io.Serializable {
+
     // Global Variables
-    
+    private String topic = "";
+
     private SearchHashMap st = new SearchHashMap();
+    private SearchHashMap topicHashMap = new SearchHashMap();
     public String results = new String();
     public static final int MAX_PAGES = 20;		// Default maxiumum pages
     public static final boolean DEBUG = false;		// This can be used to enable or disable
@@ -46,7 +49,6 @@ public class CrawlerEngine implements java.io.Serializable {
     Hashtable knownURLs;		// This table contains the list of known URLs
     int maxPages;		        // This is the maximum number of pages to crawl
 
-     
     ///////////////////////////////////////////////////////////////////////////
     //	METHOD:: Initialize(String[] argv)
     //	Arguments:
@@ -212,7 +214,6 @@ public class CrawlerEngine implements java.io.Serializable {
             } // if
 
             String strBadPath = st.nextToken();
-
             if (strURL.indexOf(strBadPath) == 0) {
                 return false;
 
@@ -241,49 +242,49 @@ public class CrawlerEngine implements java.io.Serializable {
     ///////////////////////////////////////////////////////////////////////////
     public void AddNewUrl(URL oldURL, String newUrlString) {
         URL url;
-
         if (DEBUG) {
             System.out.println("URL String " + newUrlString);
         }
 
         try {
+            if (!(oldURL.toString().endsWith("/")) && (!oldURL.toString().endsWith(".html"))) {
+                oldURL = new URL(oldURL.toString() + "/");
+            }
+
             url = new URL(oldURL, newUrlString);
 
             if (!knownURLs.containsKey(url)) {
-                String filename = url.getFile();
-                if(filename.contains("txt")) System.out.println("\t" + filename);
-                int iSuffix = filename.lastIndexOf("htm");
 
-              if ((iSuffix == filename.length() - 3) || (iSuffix == filename.length() - 4)) {
+                if (validURL(url.toString())) {
+                    if (url.toString().contains(".") && !(url.toString().contains("html"))) {
+                        LoadPage(url);
+                    }
                     knownURLs.put(url, new Integer(1));
                     newURLs.addElement(url);
                     System.out.println("Found new URL " + url.toString());
-
-              }// if
+                }// if
             } // if
 
         } catch (MalformedURLException e) {
         } // try
-
     }
+    
+    /**
+     * @author Wainaina
+     * @param newurl
+     * @return boolean true if the url doesnt include the black and white 
+     *                  subdirectory and it is on the textfiles.com website
+     *                  false otherwise
+     */
+    protected boolean validURL(String newurl) {
+        if (newurl.contains("wdirectory.html") || !(newurl.contains("www.textfiles.com"))) {
 
-    public void store(URL url, String content) {
-        String[] words;
-
-        String temp;
-        words = content.split(" ");
-        for (String word : words) {
-            temp = word.trim();
-            if (!(temp.equals(""))) {
-                temp = temp.replace("\\W$", " ");
-                st.addString(temp, url);
-            }
+            return false;
         }
-
+        return true;
     }
 
 // AddNewUrl Method
-
     //////////////////////////////////////////////////////////////////////////
     //	METHOD:: LoadPage(URL url)
     //	Arguments:
@@ -324,7 +325,9 @@ public class CrawlerEngine implements java.io.Serializable {
                 } // if
 
             } // while
-            store(url, content);
+            if (url.toString().contains(".") && !(url.toString().contains("html"))) {
+                store(url, content);
+            }
             return content;
 
         } catch (IOException e) {
@@ -334,6 +337,34 @@ public class CrawlerEngine implements java.io.Serializable {
 
         } // try
 
+    }
+
+    // store Method
+    //////////////////////////////////////////////////////////////////////////
+    //	METHOD:: store(URL url, String content)
+    //	Arguments:
+    //		URL url - this the URL to the page whose content was download
+    //          String content - content of the page on the URL url. 
+    //
+    //
+    //	Purpose: This method adds new each string found in the content into the hashamap
+    //          and map it to the given URL url 
+    //          the queue used is a searchHashMap object
+    //
+    //	Returns: void
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    public void store(URL url, String content) {
+        String[] words;
+
+        String temp;
+        words = content.split(" ");
+        for (String word : words) {
+            temp = word.trim();
+            if (!(temp.trim().equals(""))) {
+                st.addString(temp, url);
+            }
+        }
     }
 
     // LoadPage method
@@ -352,31 +383,34 @@ public class CrawlerEngine implements java.io.Serializable {
     //
     ///////////////////////////////////////////////////////////////////////////
     public void ProcessPage(URL url, String page) {
-        String lcPage = page.toLowerCase(); 	// Convert all text in the page to lower case.
-        int index = 0; 							// Character position in the page.
-        int iEndAngle, ihref, iURL,
-                iCloseQuote, iHatchMark, iEnd;		// Key token characters for parsing
+        String lcPage = page.toLowerCase();  // Convert all text in the page to lower case.
+        int index = 0;        // Character position in the page.
+        int iEndAngle, ihref, iURL, bold,
+                iCloseQuote, iHatchMark, iEnd;  // Key token characters for parsing
 
         while ((index = lcPage.indexOf("<a", index)) != -1) {
             iEndAngle = lcPage.indexOf(">", index);
             ihref = lcPage.indexOf("href", index);
+            bold = lcPage.indexOf("<b>", index);
+            
             if (ihref != -1) {
                 iURL = lcPage.indexOf("\"", ihref) + 1;
-
                 if ((iURL != -1) && (iEndAngle != -1) && (iURL < iEndAngle)) {
                     iCloseQuote = lcPage.indexOf("\"", iURL);
                     iHatchMark = lcPage.indexOf("#", iURL);
 
                     if ((iCloseQuote != -1) && (iCloseQuote < iEndAngle)) {
                         iEnd = iCloseQuote;
-
                         if ((iHatchMark != -1) && (iHatchMark < iCloseQuote)) {
                             iEnd = iHatchMark;
                         }
+                        if (bold != -1) {
+                            topic = page.substring(iEndAngle + 1, page.indexOf("</", ihref));
+                            addTopic(topic, url);
 
+                        }
                         String newUrlString = page.substring(iURL, iEnd);
                         AddNewUrl(url, newUrlString);
-
                     } // if
                 } // if
             } // if
@@ -386,46 +420,8 @@ public class CrawlerEngine implements java.io.Serializable {
         } // while
 
     } // ProcessPage method
+
     
-    public LinkedList ProcessPageForIndex(URL url, String page) {
-        LinkedList indices = new LinkedList();
-
-        String lcPage = page.toLowerCase(); 	// Convert all text in the page to lower case.
-        int index = 0; 							// Character position in the page.
-        int iEndAngle, ihref, iURL,
-                iCloseQuote, iHatchMark, iEnd;		// Key token characters for parsing
-
-        while ((index = lcPage.indexOf("<a", index)) != -1) {
-            iEndAngle = lcPage.indexOf(">", index);
-            ihref = lcPage.indexOf("href", index);
-            if (ihref != -1) {
-                iURL = lcPage.indexOf("\"", ihref) + 1;
-
-                if ((iURL != -1) && (iEndAngle != -1) && (iURL < iEndAngle)) {
-                    iCloseQuote = lcPage.indexOf("</b>", iURL);
-                    iHatchMark = lcPage.indexOf("#", iURL);
-
-                    if ((iCloseQuote != -1) && (iCloseQuote < iEndAngle)) {
-                        iEnd = iCloseQuote;
-
-                        if ((iHatchMark != -1) && (iHatchMark < iCloseQuote)) {
-                            iEnd = iHatchMark;
-                        }
-
-                        String newUrlString = page.substring(iURL, iEnd);
-                        indices.add(newUrlString);
-
-                    } // if
-                } // if
-            } // if
-
-            index = iEndAngle;
-
-        } // while
-        return indices;
-    } 
-      
-
     //////////////////////////////////////////////////////////////////////////
     //	METHOD:: Crawl(String[] argv)
     //	Arguments:
@@ -440,7 +436,7 @@ public class CrawlerEngine implements java.io.Serializable {
     //	Returns: void
     //
     ///////////////////////////////////////////////////////////////////////////
-    public void Crawl(){
+    public void Crawl() {
         String[] argv = {"http://textfiles.com", "10"};
         if (Initialize(argv)) {
             for (int i = 0; i < maxPages; i++) {
@@ -461,71 +457,25 @@ public class CrawlerEngine implements java.io.Serializable {
 
                     if (page.length() != 0) {
                         ProcessPage(url, page);
-
-                        Iterator iter = ProcessPageForIndex(url, page).iterator();
-                        while(iter.hasNext()){                        
-                            System.out.println(" ++++++++++++++++++++++++++++++++++++++++++++++++++++++" + iter.next());
-                        }
                     }
-
                     if (newURLs.isEmpty()) {
                         break;
                     }
-
                 } else {
-
                     System.out.println("URL Disallowed::" + url.toString());
-
                 } // if
 
             } // for
 
-            HashMap cashe = st.getHashMap();
-            Set<String> keyset = cashe.keySet();
-            try {
-                File file = new File("cache.txt");
-                if (file.exists()) {
-                    file.delete();
-                }
-                file.createNewFile();
-
-                FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                BufferedWriter bw = new BufferedWriter(fw);
-                
-                for (String key : keyset) {
-                    bw.write(key + "###" + cashe.get(key) + "\n");
-                    //System.out.println(key + "###" + cashe.get(key));
-                    results += key + " : " + cashe.get(key) + "\n";
-                }
-
-                bw.close();
-
-                System.out.println("Done");
-
-            } catch (IOException e) {
-            }
             System.out.println("Search complete.");
-            HashSerializer sr = new HashSerializer();
-            sr.serialize(st.getHashMap(), "cash");
+            HashSerializer.serialize(st.getHashMap(), "cache");
         } // if
 
     }
-   
-    // Crawl
-    //////////////////////////////////////////////////////////////////////////
-    //	METHOD:: main(String[] argv)
-    //	Arguments:
-    //		String[] argv - these are the command line arguments entered by
-    //						the user.
-    //
-    //	Purpose: The main instantiates a CrawlerEngine and starts the operation
-    //			 by calling the Crawl() method.
-    //
-    //	Returns: void
-    //
-    ///////////////////////////////////////////////////////////////////////////
-//    public static void main2(String[] argv) {
-//        CrawlerEngine wc = new CrawlerEngine();
-//        wc.Crawl(argv);
-//    } // main
-} // WebCrawler
+
+    private void addTopic(String topic, URL url) {
+        if (url.toString().indexOf(".") == -1) {
+            topicHashMap.addString(topic, url);
+        }
+    }
+}
