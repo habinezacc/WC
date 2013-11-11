@@ -29,6 +29,8 @@ import webcr.HashSerializer;
 import java.util.*;
 import java.net.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CrawlerEngine implements java.io.Serializable {
 
@@ -268,13 +270,12 @@ public class CrawlerEngine implements java.io.Serializable {
         } catch (MalformedURLException e) {
         } // try
     }
-    
+
     /**
      * @author Wainaina
      * @param newurl
-     * @return boolean true if the url doesnt include the black and white 
-     *                  subdirectory and it is on the textfiles.com website
-     *                  false otherwise
+     * @return boolean true if the url doesnt include the black and white
+     * subdirectory and it is on the textfiles.com website false otherwise
      */
     protected boolean validURL(String newurl) {
         if (newurl.contains("wdirectory.html") || !(newurl.contains("www.textfiles.com"))) {
@@ -392,7 +393,7 @@ public class CrawlerEngine implements java.io.Serializable {
             iEndAngle = lcPage.indexOf(">", index);
             ihref = lcPage.indexOf("href", index);
             bold = lcPage.indexOf("<b>", index);
-            
+
             if (ihref != -1) {
                 iURL = lcPage.indexOf("\"", ihref) + 1;
                 if ((iURL != -1) && (iEndAngle != -1) && (iURL < iEndAngle)) {
@@ -418,10 +419,8 @@ public class CrawlerEngine implements java.io.Serializable {
             index = iEndAngle;
 
         } // while
-
     } // ProcessPage method
 
-    
     //////////////////////////////////////////////////////////////////////////
     //	METHOD:: Crawl(String[] argv)
     //	Arguments:
@@ -468,14 +467,19 @@ public class CrawlerEngine implements java.io.Serializable {
             } // for
 
             System.out.println("Search complete.");
-            HashSerializer.serialize(st.getHashMap(), "cache");
+            HashSerializer.serialize(st.getHashMap(), "DocumentCache");
+            HashSerializer.serialize(topicHashMap.getHashMap(), "indexCache");
         } // if
 
     }
 
     private void addTopic(String topic, URL url) {
-        if (url.toString().indexOf(".") == -1) {
-            topicHashMap.addString(topic, url);
+        if (topic.toString().indexOf(".") == -1
+                && !topic.toString().contains("US-")
+                && !topic.toString().trim().startsWith("<")) {
+
+                topicHashMap.addString(topic, url);
+            
         }
     }
 }

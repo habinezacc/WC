@@ -4,6 +4,7 @@
  */
 package gui;
 
+import static java.lang.Thread.sleep;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Set;
@@ -172,7 +173,9 @@ public class Canvas extends javax.swing.JFrame {
                             } else {
                                 jLabel2.setText("Search complete!");
                                 String overAll = "";
-                                Set<URL> set = search(keyWord);
+                                HashSerializer hsr = new HashSerializer();
+                                HashMap<String, Set<URL>>hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize("documentCache.ser");
+                                Set<URL> set = search(keyWord, hm);
                                 if (set != null) {
                                     for (URL url : set) {
                                         overAll += url.toString() + '\n';
@@ -187,24 +190,6 @@ public class Canvas extends javax.swing.JFrame {
 
                 }
 
-                private Set<URL> search(String word) {
-                    String[] keywords = word.split(" ");
-                    HashSerializer hsr = new HashSerializer();
-                    HashMap<String, Set<URL>> hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize("cache.ser");
-                    Set<URL> combination = hm.get(keywords[0]);
-                    if (keywords.length > 1) {
-                        Set<URL> other;
-                        for (int index = 1; index < keywords.length; index++) {
-                            other = hm.get((keywords[index]));
-                            if (other != null) {
-                                combination.retainAll(other);
-                            }
-                        }
-                        combination.addAll(hm.get(word));//the file where the whole string is found
-                    }
-
-                    return combination;
-                }
             }.start();
         }
     }//GEN-LAST:event_documentSearchButtonActionPerformed
@@ -214,7 +199,43 @@ public class Canvas extends javax.swing.JFrame {
     }//GEN-LAST:event_progressBarStateChanged
 
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexSearchButtonActionPerformed
-        // TODO add your handling code here:
+        outPutTextPane.setText("");
+        progressBar.setValue(0);
+        keyWord = keyWordField.getText();
+        if (keyWord == null || keyWord.equals("")) {
+            System.out.println("Please enter a key word to search");
+        } else {
+            outPutTextPane.setVisible(true);
+            new Thread() {
+                @Override
+                public void run() {
+                    for (int i = 0; i <= 100; i++) {
+                        try {
+                            sleep(6);
+                            progressBar.setValue(i);
+
+                            if (progressBar.getValue() <= 99) {
+                                jLabel2.setText("Search in progress, please wait ...");
+                            } else {
+                                jLabel2.setText("Search complete!");
+                                String overAll = "";
+                                HashSerializer hsr = new HashSerializer();
+                                HashMap<String, Set<URL>>hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize("indexCache.ser");
+                                Set<URL> set = search(keyWord, hm);
+                                if (set != null) {
+                                    for (URL url : set) {
+                                        overAll += url.toString() + '\n';
+                                    }
+                                }
+                                outPutTextPane.setText(overAll);
+                            }
+                        } catch (InterruptedException ex) {
+                            System.out.println("Something went wrong with the progress bar \n" + ex);
+                        }
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_indexSearchButtonActionPerformed
 
     /**
@@ -236,4 +257,21 @@ public class Canvas extends javax.swing.JFrame {
         cashe = c;
     }
 
+    private Set<URL> search(String word, HashMap<String, Set<URL>> hm) {
+        String[] keywords = word.split(" ");
+
+        Set<URL> combination = hm.get(keywords[0]);
+        if (keywords.length > 1) {
+            Set<URL> other;
+            for (int index = 1; index < keywords.length; index++) {
+                other = hm.get((keywords[index]));
+                if (other != null) {
+                    combination.retainAll(other);
+                }
+            }
+            combination.addAll(hm.get(word));//the file where the whole string is found
+        }
+
+        return combination;
+    }
 }
