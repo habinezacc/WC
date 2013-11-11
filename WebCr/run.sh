@@ -1,1 +1,1 @@
-sh java -jar dist\WebCr.jar
+java -jar dist\WebCr.jar

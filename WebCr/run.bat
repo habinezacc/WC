@@ -1,1 +1,1 @@
-java -jar dist/CrawlerEngine.jar /K
+java -jar dist/WebCr.jar /K

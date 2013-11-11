@@ -47,6 +47,7 @@ public class Canvas extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         outPutTextPane = new javax.swing.JTextPane();
         indexSearchButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,6 +107,9 @@ public class Canvas extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
+        jLabel1.setText("Search Results");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -128,6 +132,10 @@ public class Canvas extends javax.swing.JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 24, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,7 +150,9 @@ public class Canvas extends javax.swing.JFrame {
                     .addComponent(documentSearchButton))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -153,45 +163,7 @@ public class Canvas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documentSearchButtonActionPerformed
-        outPutTextPane.setText("");
-        progressBar.setValue(0);
-        keyWord = keyWordField.getText();
-        if (keyWord == null || keyWord.equals("")) {
-            System.out.println("Please enter a key word to search");
-        } else {
-            outPutTextPane.setVisible(true);
-            new Thread() {
-                @Override
-                public void run() {
-                    for (int i = 0; i <= 100; i++) {
-                        try {
-                            sleep(6);
-                            progressBar.setValue(i);
-
-                            if (progressBar.getValue() <= 99) {
-                                jLabel2.setText("Search in progress, please wait ...");
-                            } else {
-                                jLabel2.setText("Search complete!");
-                                String overAll = "";
-                                HashSerializer hsr = new HashSerializer();
-                                HashMap<String, Set<URL>>hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize("documentCache.ser");
-                                Set<URL> set = search(keyWord, hm);
-                                if (set != null) {
-                                    for (URL url : set) {
-                                        overAll += url.toString() + '\n';
-                                    }
-                                }
-                                outPutTextPane.setText(overAll);
-                            }
-                        } catch (InterruptedException ex) {
-                            System.out.println("Something went wrong with the progress bar \n" + ex);
-                        }
-                    }
-
-                }
-
-            }.start();
-        }
+        searchAndUpdate("documentCache.ser");
     }//GEN-LAST:event_documentSearchButtonActionPerformed
 
     private void progressBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_progressBarStateChanged
@@ -199,43 +171,7 @@ public class Canvas extends javax.swing.JFrame {
     }//GEN-LAST:event_progressBarStateChanged
 
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexSearchButtonActionPerformed
-        outPutTextPane.setText("");
-        progressBar.setValue(0);
-        keyWord = keyWordField.getText();
-        if (keyWord == null || keyWord.equals("")) {
-            System.out.println("Please enter a key word to search");
-        } else {
-            outPutTextPane.setVisible(true);
-            new Thread() {
-                @Override
-                public void run() {
-                    for (int i = 0; i <= 100; i++) {
-                        try {
-                            sleep(6);
-                            progressBar.setValue(i);
-
-                            if (progressBar.getValue() <= 99) {
-                                jLabel2.setText("Search in progress, please wait ...");
-                            } else {
-                                jLabel2.setText("Search complete!");
-                                String overAll = "";
-                                HashSerializer hsr = new HashSerializer();
-                                HashMap<String, Set<URL>>hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize("indexCache.ser");
-                                Set<URL> set = search(keyWord, hm);
-                                if (set != null) {
-                                    for (URL url : set) {
-                                        overAll += url.toString() + '\n';
-                                    }
-                                }
-                                outPutTextPane.setText(overAll);
-                            }
-                        } catch (InterruptedException ex) {
-                            System.out.println("Something went wrong with the progress bar \n" + ex);
-                        }
-                    }
-                }
-            }.start();
-        }
+        searchAndUpdate("indexCache.ser");
     }//GEN-LAST:event_indexSearchButtonActionPerformed
 
     /**
@@ -244,6 +180,7 @@ public class Canvas extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton documentSearchButton;
     private javax.swing.JButton indexSearchButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -257,21 +194,58 @@ public class Canvas extends javax.swing.JFrame {
         cashe = c;
     }
 
-    private Set<URL> search(String word, HashMap<String, Set<URL>> hm) {
-        String[] keywords = word.split(" ");
+    private void searchAndUpdate(final String filename) {
+        outPutTextPane.setText("");
+        progressBar.setValue(0);
+        keyWord = keyWordField.getText().toLowerCase();
+        if (keyWord == null || keyWord.equals("")) {
+            System.out.println("Please enter a key word to search");
+        } else {
+            outPutTextPane.setVisible(true);
+            new Thread() {
+                @Override
+                public void run() {
+                    for (int i = 0; i <= 100; i++) {
+                        try {
+                            sleep(6);
+                            progressBar.setValue(i);
 
-        Set<URL> combination = hm.get(keywords[0]);
-        if (keywords.length > 1) {
-            Set<URL> other;
-            for (int index = 1; index < keywords.length; index++) {
-                other = hm.get((keywords[index]));
-                if (other != null) {
-                    combination.retainAll(other);
+                            if (progressBar.getValue() <= 99) {
+                                jLabel2.setText("Search in progress, please wait ...");
+                            } else {
+                                jLabel2.setText("Search complete!");
+                                String overAll = "";
+                                HashMap<String, Set<URL>> hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize(filename);
+                                Set<URL> set = search(keyWord, hm);
+                                if (set != null) {
+                                    for (URL url : set) {
+                                        overAll += url.toString() + '\n';
+                                    }
+                                }
+                                outPutTextPane.setText(overAll);
+                            }
+                        } catch (InterruptedException ex) {
+                            System.out.println("Something went wrong with the progress bar \n" + ex);
+                        }
+                    }
                 }
-            }
-            combination.addAll(hm.get(word));//the file where the whole string is found
-        }
+                private Set<URL> search(String word, HashMap<String, Set<URL>> hm) {
+                    String[] keywords = word.split(" ");
+                    Set<URL> combination = hm.get(keywords[0]);
+                    if (keywords.length > 1) {
+                        Set<URL> other;
+                        for (int index = 1; index < keywords.length; index++) {
+                            other = hm.get((keywords[index]));
+                            if (other != null) {
+                                combination.retainAll(other);
+                            }
+                        }
+                        combination.addAll(hm.get(word));//the file where the whole string is found
+                    }
 
-        return combination;
+                    return combination;
+                }
+            }.start();
+        }
     }
 }
