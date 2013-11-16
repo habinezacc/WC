@@ -1,31 +1,35 @@
+package WebCrawler;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gui;
 
-import static java.lang.Thread.sleep;
+
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Set;
-import webcr.HashSerializer;
 
 /**
  *
  * @author chabineza
  */
-public class Canvas extends javax.swing.JFrame {
+public class UserInterface extends javax.swing.JFrame {
 
     /**
      * Creates new form Canvas
      *
      */
-    public HashMap cashe = new HashMap();
+    private HashMap<String, Set<URL>> documentCache;
+    private HashMap<String, LinkedList<URL>> indexCache;
     private String keyWord;
 
-    public Canvas() {
+    public UserInterface() {
         initComponents();
         this.jPanel1.setVisible(true);
+        documentCache  = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
+        indexCache  = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
 
     }
 
@@ -163,15 +167,57 @@ public class Canvas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documentSearchButtonActionPerformed
-        searchAndUpdate("documentCache.ser");
+        keyWord = keyWordField.getText().toLowerCase();
+        if (keyWord == null || keyWord.equals("")) {
+            System.out.println("Please enter a key word to search");
+        } else {
+            outPutTextPane.setVisible(true);
+            new Thread() {
+                @Override
+                public void run() {
+                    
+                    String overAll = "";
+                    Set<URL> set;
+                    DocumentSearch docSearch  = new DocumentSearch(keyWord);
+                    set = docSearch.search(documentCache);
+                    if (set != null) {
+                        for (URL url : set) {
+                            overAll += url.toString() + '\n';
+                        }
+                    }
+                    outPutTextPane.setText(overAll);
+                }
+            }.start();
+        }
+        //searchAndUpdate("documentCache.ser");
     }//GEN-LAST:event_documentSearchButtonActionPerformed
 
     private void progressBarStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_progressBarStateChanged
-        // TODO add your handling code here:
+        // TODO add your handling code here:  
     }//GEN-LAST:event_progressBarStateChanged
 
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexSearchButtonActionPerformed
-        searchAndUpdate("indexCache.ser");
+        keyWord = keyWordField.getText().toLowerCase();
+        if (keyWord == null || keyWord.equals("")) {
+            System.out.println("Please enter a key word to search");
+        } else {
+            new Thread() {
+                @Override
+                public void run() {
+                    String overAll = "";
+                    LinkedList<URL> list;
+                    IndexSearch indexSearch  = new IndexSearch(keyWord);
+                    list = indexSearch.search(indexCache);
+                    if (list != null) {
+                        for (URL url : list) {
+                            overAll += url.toString() + '\n';
+                        }
+                    }
+                    outPutTextPane.setText(overAll);
+                }
+            }.start();
+        }
+        
     }//GEN-LAST:event_indexSearchButtonActionPerformed
 
     /**
@@ -186,66 +232,10 @@ public class Canvas extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField keyWordField;
     private javax.swing.JTextPane outPutTextPane;
-    private javax.swing.JProgressBar progressBar;
+    public javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel searchKeyWordLabel;
     // End of variables declaration//GEN-END:variables
 
-    public void setCache(HashMap c) {
-        cashe = c;
-    }
-
-    private void searchAndUpdate(final String filename) {
-        outPutTextPane.setText("");
-        progressBar.setValue(0);
-        keyWord = keyWordField.getText().toLowerCase();
-        if (keyWord == null || keyWord.equals("")) {
-            System.out.println("Please enter a key word to search");
-        } else {
-            outPutTextPane.setVisible(true);
-            new Thread() {
-                @Override
-                public void run() {
-                    for (int i = 0; i <= 100; i++) {
-                        try {
-                            sleep(6);
-                            progressBar.setValue(i);
-
-                            if (progressBar.getValue() <= 99) {
-                                jLabel2.setText("Search in progress, please wait ...");
-                            } else {
-                                jLabel2.setText("Search complete!");
-                                String overAll = "";
-                                HashMap<String, Set<URL>> hm = (HashMap<String, Set<URL>>) HashSerializer.deSerialize(filename);
-                                Set<URL> set = search(keyWord, hm);
-                                if (set != null) {
-                                    for (URL url : set) {
-                                        overAll += url.toString() + '\n';
-                                    }
-                                }
-                                outPutTextPane.setText(overAll);
-                            }
-                        } catch (InterruptedException ex) {
-                            System.out.println("Something went wrong with the progress bar \n" + ex);
-                        }
-                    }
-                }
-                private Set<URL> search(String word, HashMap<String, Set<URL>> hm) {
-                    String[] keywords = word.split(" ");
-                    Set<URL> combination = hm.get(keywords[0]);
-                    if (keywords.length > 1) {
-                        Set<URL> other;
-                        for (int index = 1; index < keywords.length; index++) {
-                            other = hm.get((keywords[index]));
-                            if (other != null) {
-                                combination.retainAll(other);
-                            }
-                        }
-                        combination.addAll(hm.get(word));//the file where the whole string is found
-                    }
-
-                    return combination;
-                }
-            }.start();
-        }
-    }
+   
+    
 }

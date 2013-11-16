@@ -26,7 +26,7 @@ GENERAL USAGE NOTES
 
 Requirements
 ----------------
-Java 1.7.0 or higher
+Java 1.6.0 or higher
 
 Launching the Program
 ---------------------------------

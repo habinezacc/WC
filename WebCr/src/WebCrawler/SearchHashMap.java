@@ -1,4 +1,6 @@
-package crawler;
+package WebCrawler;
+
+
 
 import java.net.URL;
 import java.util.HashMap;
@@ -14,8 +16,8 @@ public class SearchHashMap {
     private HashMap<String, Set<URL>> docSearch;
 
     /**
-     *This constructor to initializes the hashmap
-     *The hashmap maps String to an URL as a value
+     *This constructor to initializes the hash map
+     *The hash map maps String to an URL as a value
      */
     public SearchHashMap() {
         docSearch = new HashMap<>();
@@ -57,13 +59,5 @@ public class SearchHashMap {
     public HashMap getHashMap() {
         return docSearch;
     }
-   /**
-    * This method prints out the set of urls
-    * @param set 
-    */
-    public void printSet(Set<URL> set) {
-        for (URL url : set) {
-            System.out.println(url.toString());
-        }
-    }
+   
 }
