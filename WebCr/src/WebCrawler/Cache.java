@@ -80,21 +80,23 @@ public class Cache implements Serializable
 
     public void loadDocumentHashMap()
     {
-        documentCache = (HashMap<String, Set<URL>>) readObject("documentSearch.ser");
+        documentCache = (HashMap<String, Set<URL>>) readObject("documentCache.ser");
     }
 
     public HashMap<String, Set<URL>> getDocumentHashMap()
     {
+        loadDocumentHashMap();
         return documentCache;
     }
 
-    public void loadIndexHashMap()
+    private void loadIndexHashMap()
     {
-        indexCache = (HashMap<String, LinkedList<URL>>) readObject("indexSearch.ser");
+        indexCache = (HashMap<String, LinkedList<URL>>) readObject("indexCache.ser");
     }
 
-    public HashMap<String, LinkedList<URL>> getIndexCashe()
+    public HashMap<String, LinkedList<URL>> getIndexCache()
     {
+        loadIndexHashMap();
         return indexCache;
     }
 }

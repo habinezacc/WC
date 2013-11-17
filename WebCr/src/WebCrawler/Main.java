@@ -14,8 +14,8 @@ public class Main extends Thread
      */
     public static void main(String args[])
     {
-        UserInterface cv = new UserInterface();
-        cv.setVisible(true);
+        UserInterface ui = new UserInterface();
+        ui.setVisible(true);
         CrawlerEngine wc = new CrawlerEngine();
         wc.Crawl();
     }

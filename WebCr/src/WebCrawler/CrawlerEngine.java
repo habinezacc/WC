@@ -43,7 +43,8 @@ public class CrawlerEngine implements java.io.Serializable
 
     // Global Variables
     private String topic = "";
-    private int _currentDepth = 0;
+    private int numPages = 0; //number of pages that are loader and stored in the hash map
+    private boolean _done = false;
 
     private HashMap<String, Set<URL>> documentHashMap = new HashMap();
     private HashMap<String, LinkedList<URL>> topicHashMap = new HashMap();
@@ -80,7 +81,8 @@ public class CrawlerEngine implements java.io.Serializable
         URL url;
         knownURLs = new Hashtable();
         newURLs = new Vector();
-        _currentDepth = 0;
+        numPages = 0;
+        _done = false;
 
         if (argv.length == 0)
         {
@@ -119,7 +121,6 @@ public class CrawlerEngine implements java.io.Serializable
             System.out.println("argv[1] = " + argv[1]);
             int iPages = Integer.parseInt(argv[1]);
             System.out.println("iPages = " + Integer.parseInt(argv[1]));
-
             maxDepth = iPages;
 
         } else
@@ -413,12 +414,18 @@ public class CrawlerEngine implements java.io.Serializable
 
             } // while
             dotIndex = url.toString().length();
-            if (url.toString().charAt(dotIndex - 4) == '.' && !(url.toString().contains("html")))
+            if (url.toString().charAt(dotIndex - 4) == '.' && !(url.toString().contains("htm")))
             {
                 storeDocument(url, content);
-            }
+                numPages++;
 
-            _currentDepth++;
+                /*if (numPages % 10 == 0 && numPages > 0)
+                 {
+                 Cache.writeObject(documentHashMap, "documentCache");
+                 Cache.writeObject(topicHashMap, "indexCache");
+                 System.out.println("======================================" + numPages);
+                 }*/
+            }
             return content;
 
         } catch (IOException e)
@@ -454,14 +461,28 @@ public class CrawlerEngine implements java.io.Serializable
     public void storeDocument(URL url, String content)
     {
         String[] words;
-        String temp;
         words = content.split(" ");
         for (String word : words)
         {
-            temp = word.trim();
-            if (!(temp.trim().equals("")))
+            word = word.trim();
+            if (!(word.trim().equals("")) && !url.toString().endsWith(".com"))
             {
-                addString(temp, url);
+                word = word.toLowerCase();
+                Set<URL> set = new HashSet();
+                if (documentHashMap.containsKey(word))
+                {
+                    set = documentHashMap.get(word);
+                    if (!(set.contains(url)))
+                    {
+                        set.add(url);
+                    }
+
+                } else
+                {
+                    set.add(url);
+                }
+                documentHashMap.put(word, set);
+
             }
         }
     }// store method
@@ -501,7 +522,6 @@ public class CrawlerEngine implements java.io.Serializable
             iEndAngle = lcPage.indexOf(">", index);
             ihref = lcPage.indexOf("href", index);
             bold = lcPage.indexOf("<b>", index);
-
             if (ihref != -1)
             {
                 iURL = lcPage.indexOf("\"", ihref) + 1;
@@ -560,7 +580,7 @@ public class CrawlerEngine implements java.io.Serializable
     {
         String[] argv =
         {
-            "http://textfiles.com", "20"
+            "http://textfiles.com", "10"
         };
         if (Initialize(argv))
         {
@@ -577,11 +597,9 @@ public class CrawlerEngine implements java.io.Serializable
                 if (RobotSafe(url))
                 {
                     String page = LoadPage(url);
-
                     if (DEBUG)
                     {
                         System.out.println(page);
-
                     }
 
                     if (page.length() != 0)
@@ -602,6 +620,7 @@ public class CrawlerEngine implements java.io.Serializable
             } // for
 
             System.out.println("Search complete.");
+            _done = true;
             Cache.writeObject(documentHashMap, "documentCache");
             Cache.writeObject(topicHashMap, "indexCache");
         } // if
@@ -646,32 +665,8 @@ public class CrawlerEngine implements java.io.Serializable
         }//if
     }//addTopic Method
 
-    /**
-     * This method is used to add string to the hashmap
-     *
-     * @param word this parameter is used to add in url
-     * @param url : Is used to enter inside the
-     * @see printHashMap
-     */
-    public void addString(String word, URL url)
+    public boolean isDone()
     {
-        if (!url.toString().endsWith(".com"))
-        {
-            word = word.toLowerCase();
-            Set<URL> set = new HashSet();
-            if (documentHashMap.containsKey(word))
-            {
-                set = documentHashMap.get(word);
-                if (!(set.contains(url)))
-                {
-                    set.add(url);
-                }
-
-            } else
-            {
-                set.add(url);
-            }
-            documentHashMap.put(word, set);
-        }
+        return _done;
     }
 }
