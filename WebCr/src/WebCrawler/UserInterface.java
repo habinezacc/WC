@@ -266,6 +266,7 @@ public class UserInterface extends javax.swing.JFrame
                         }
                     } else
                     {
+                       // throws new Exception("jdfjjfjg");
                         output.setText("\t" +keyWordField.getText() + " was NOT found!");
                     }
                 } catch (InterruptedException ex)
