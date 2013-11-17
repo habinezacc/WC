@@ -8,9 +8,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JTextArea;
 
 /**
  *
@@ -30,10 +27,6 @@ public class UserInterface extends javax.swing.JFrame
     public UserInterface()
     {
         initComponents();
-        this.jPanel1.setVisible(true);
-        documentCache = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
-        indexCache = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
-
     }
 
     /**
@@ -195,7 +188,8 @@ public class UserInterface extends javax.swing.JFrame
 
     private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_documentSearchButtonActionPerformed
     {//GEN-HEADEREND:event_documentSearchButtonActionPerformed
-        
+        output.setText("");
+        documentCache = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
         keyWord = keyWordField.getText().toLowerCase();
         DocumentSearch docSearch = new DocumentSearch(keyWord, documentCache, output, Label, progressBar);
         docSearch.search();
@@ -204,57 +198,10 @@ public class UserInterface extends javax.swing.JFrame
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_indexSearchButtonActionPerformed
     {//GEN-HEADEREND:event_indexSearchButtonActionPerformed
         output.setText("");
+        indexCache = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
         keyWord = keyWordField.getText().toLowerCase();
-
-        new Thread()
-        {
-            @Override
-            public void run()
-            {
-                if (!(keyWord.trim() == null || keyWord.equals("")))
-                {
-                    try
-                    {
-                        LinkedList<URL> list;
-                        IndexSearch indexSearch = new IndexSearch(keyWord);
-                        list = indexSearch.search(indexCache);
-                        String topic = "";
-                        if (list != null)
-                        {
-                            for (URL url : list)
-                            {
-                                int j = 0, progress = 0;
-                                sleep(10);
-                                topic = url.toString().substring(url.toString().lastIndexOf("/") + 1);
-                                progress = (j + 1) * 100 / list.size();
-                                progressBar.setValue(progress);
-                                if (progressBar.getValue() < 100)
-                                {
-                                    Label.setText("Please wait while searching...");
-                                    output.append(topic + "  ===>  " + url.toString() + "\n");
-                                    j++;
-                                } else
-                                {
-                                    Label.setText("Search complete");
-                                    output.append(topic + "  ===>  " + url.toString() + "\n");
-                                    j++;
-                                }
-                            }
-                        } else
-                        {
-                            output.setText("\"" + keyWordField.getText() + "\"" + " was NOT FOUND!");
-                        }
-                    } catch (InterruptedException ex)
-                    {
-                        System.out.println("Something went wrong with the progress bar \n" + ex);
-                    }
-                } else
-                {
-                    Label.setText("Plase enter a topic");
-                    output.setText("Plase enter a topic");
-                }
-            }
-        }.start();
+        IndexSearch indexSearch = new IndexSearch(keyWord, indexCache, output, Label, progressBar);
+        indexSearch.search();
     }//GEN-LAST:event_indexSearchButtonActionPerformed
 
     /**
