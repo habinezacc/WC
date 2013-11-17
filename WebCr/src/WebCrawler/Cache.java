@@ -1,4 +1,5 @@
 package WebCrawler;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,12 +17,14 @@ import java.util.logging.Logger;
  * 
  * @author habineza
  */
-public class Cache implements Serializable {
+public class Cache implements Serializable
+{
 
     private HashMap<String, Set<URL>> documentCache;
     private HashMap<String, LinkedList<URL>> indexCache;
 
-    public Cache() {
+    public Cache()
+    {
         this.documentCache = new HashMap<>();
         this.indexCache = new HashMap<>();
     }
@@ -33,17 +36,22 @@ public class Cache implements Serializable {
      * object
      * @return Object
      */
-    public static Object readObject(String serialPath) {
+    public static Object readObject(String serialPath)
+    {
         Object obj = null;
-        try {
+        try
+        {
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(serialPath));
-            try {
+            try
+            {
                 obj = in.readObject();
-            } catch (ClassNotFoundException ex) {
+            } catch (ClassNotFoundException ex)
+            {
                 Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
             }
             in.close();
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             Logger.getLogger(Cache.class.getName()).log(Level.SEVERE, null, ex);
         }
         return obj;
@@ -55,31 +63,38 @@ public class Cache implements Serializable {
      * @param outputPath The relative filename to output the serialized object
      * @param obj object to be serialized
      */
-    public static void writeObject(Object obj, String outputPath) {
+    public static void writeObject(Object obj, String outputPath)
+    {
         String path = outputPath + ".ser";
-        try {
+        try
+        {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
             out.writeObject(obj);
             out.flush();
             out.close();
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
 
         }
     }
 
-    public void loadDocumentHashMap() {
+    public void loadDocumentHashMap()
+    {
         documentCache = (HashMap<String, Set<URL>>) readObject("documentSearch.ser");
     }
 
-    public HashMap<String, Set<URL>> getDocumentHashMap() {
+    public HashMap<String, Set<URL>> getDocumentHashMap()
+    {
         return documentCache;
     }
 
-    public void loadIndexHashMap() {
+    public void loadIndexHashMap()
+    {
         indexCache = (HashMap<String, LinkedList<URL>>) readObject("indexSearch.ser");
     }
 
-    public HashMap<String, LinkedList<URL>> getIndexCashe() {
+    public HashMap<String, LinkedList<URL>> getIndexCashe()
+    {
         return indexCache;
     }
 }

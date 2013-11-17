@@ -13,29 +13,40 @@ import java.util.Set;
  *
  * @author chabineza
  */
-public class DocumentSearch {
+public class DocumentSearch
+{
 
     private String keyword;
-    public DocumentSearch(String keyword){
+
+    public DocumentSearch(String keyword)
+    {
         this.keyword = keyword.toLowerCase();
     }
-    private Boolean emptyKeyWord() {
-        if (keyword.trim() == null) {
+
+    private Boolean emptyKeyWord()
+    {
+        if (keyword.trim() == null)
+        {
             System.out.println("Please enter a key word to search");
             return true;
         }
         return false;
     }
 
-    public Set<URL> search(HashMap<String, Set<URL>> searchMap) {
-        if (!emptyKeyWord()) {
+    public Set<URL> search(HashMap<String, Set<URL>> searchMap)
+    {
+        if (!emptyKeyWord())
+        {
             String[] keywords = keyword.split(" ");
             Set<URL> urlSet = searchMap.get(keywords[0]);
-            if (keywords.length > 1) {
+            if (keywords.length > 1)
+            {
                 Set<URL> other;
-                for (int index = 1; index < keywords.length; index++) {
+                for (int index = 1; index < keywords.length; index++)
+                {
                     other = searchMap.get((keywords[index]));
-                    if (other != null) {
+                    if (other != null)
+                    {
                         urlSet.retainAll(other);
                     }
                 }

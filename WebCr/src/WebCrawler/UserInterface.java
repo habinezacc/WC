@@ -4,8 +4,6 @@ package WebCrawler;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,7 +13,8 @@ import java.util.Set;
  *
  * @author chabineza
  */
-public class UserInterface extends javax.swing.JFrame {
+public class UserInterface extends javax.swing.JFrame
+{
 
     /**
      * Creates new form Canvas
@@ -25,11 +24,12 @@ public class UserInterface extends javax.swing.JFrame {
     private HashMap<String, LinkedList<URL>> indexCache;
     private String keyWord;
 
-    public UserInterface() {
+    public UserInterface()
+    {
         initComponents();
         this.jPanel1.setVisible(true);
-        documentCache  = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
-        indexCache  = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
+        documentCache = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
+        indexCache = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
 
     }
 
@@ -183,104 +183,97 @@ public class UserInterface extends javax.swing.JFrame {
 
     private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documentSearchButtonActionPerformed
         output.setText("");
-        progressBar.setValue(0);
         keyWord = keyWordField.getText().toLowerCase();
-        if (keyWord == null || keyWord.equals("")) {
-            System.out.println("Please enter a key word to search");
-        } else {
-   
-            new Thread() {
-                @Override
- 
-                public void run() 
+        progressBar.setValue(0);
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
                 {
-                    try
-                     {
-                       Set<URL> set;
-                        DocumentSearch docSearch  = new DocumentSearch(keyWord);
-                        set = docSearch.search(documentCache);
-                        if (set != null)
+                    Set<URL> set;
+                    DocumentSearch docSearch = new DocumentSearch(keyWord);
+                    set = docSearch.search(documentCache);
+                    if (set != null)
+                    {
+                        String document = "";
+                        int j = 0, progress = 0;
+                        for (URL url : set)
                         {
-                            String document="";
-                            int j = 0, progress = 0;
-                            for (URL url : set)
+                            sleep(100);
+                            document = url.toString().substring(url.toString().lastIndexOf("/") + 1);
+                            progress = (j + 1) * 100 / set.size();
+                            progressBar.setValue(progress);
+                            if (progressBar.getValue() < 100)
                             {
-                                sleep(100);
-                                document = url.toString().substring(url.toString().lastIndexOf("/")+1);
-                                progress = (j+1) * 100/set.size();
-                                progressBar.setValue(progress);
-                                if(progressBar.getValue()< 100)
-                                {
-                                    Label.setText("Please wait while searching...");
-                                    output.append(document+" = "+url.toString() + "\n");
-                                    j++;
-                                }
-                                else
-                                {
-                                    Label.setText("Search complete");
-                                    output.append(document+" = "+url.toString() + "\n");
-                                    j++;
-                                }  
+                                Label.setText("Please wait while searching...");
+                                output.append(document + "  ===>  " + url.toString() + "\n");
+                                j++;
+                            } else
+                            {
+                                Label.setText("Search complete");
+                                output.append(document + "  ===>  " + url.toString() + "\n");
+                                j++;
                             }
                         }
-                     }
-                 catch (InterruptedException ex) 
-                 {
-                      System.out.println("Something went wrong with the progress bar \n" + ex);
-                 }     
-                  }
-            }.start();
-        }
-        //searchAndUpdate("documentCache.ser");
+                    } else
+                    {
+
+                        output.setText("\t" + keyWordField.getText() + " was NOT found!");
+                    }
+                } catch (InterruptedException ex)
+                {
+                    System.out.println("Something went wrong with the progress bar \n" + ex);
+                }
+            }
+        }.start();
     }//GEN-LAST:event_documentSearchButtonActionPerformed
 
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexSearchButtonActionPerformed
+        output.setText("");
         keyWord = keyWordField.getText().toLowerCase();
-        if (keyWord == null || keyWord.equals("")) {
-            System.out.println("Please enter a key word to search");
-        } else {
-            new Thread() {
-                @Override
-                public void run()
-                 {
-                     try
-                     {
-                        String overAll = "";
-                         LinkedList<URL> list;
-                        IndexSearch indexSearch  = new IndexSearch(keyWord);
-                        list = indexSearch.search(indexCache);
-                        if (list != null)
+
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    LinkedList<URL> list;
+                    IndexSearch indexSearch = new IndexSearch(keyWord);
+                    list = indexSearch.search(indexCache);
+                    if (list != null)
+                    {
+                        for (URL url : list)
                         {
-                            for (URL url : list)
+                            int j = 0, progress = 0;
+                            sleep(100);
+                            progress = (j + 1) * 100 / list.size();
+                            progressBar.setValue(progress);
+                            if (progressBar.getValue() < 100)
                             {
-                                int j = 0, progress = 0;
-                                overAll += url.toString() + '\n';
-                                sleep(100);
-                                progress = (j+1) * 100/list.size();
-                                progressBar.setValue(progress);
-                                if(progressBar.getValue()< 100)
-                                {
-                                    Label.setText("Please wait while searching...");
-                                    output.append(url.toString() + "\n");
-                                    j++;
-                                }
-                                else
-                                {
-                                    Label.setText("Search complete");
-                                    output.append(url.toString() + "\n");
-                                    j++;
-                                }      
+                                Label.setText("Please wait while searching...");
+                                output.append(url.toString() + "\n");
+                                j++;
+                            } else
+                            {
+                                Label.setText("Search complete");
+                                output.append(url.toString() + "\n");
+                                j++;
                             }
-                       }
-                     }   
-                   catch (InterruptedException ex) 
-                 {
-                      System.out.println("Something went wrong with the progress bar \n" + ex);
-                 } 
+                        }
+                    } else
+                    {
+                        output.setText("\t" +keyWordField.getText() + " was NOT found!");
+                    }
+                } catch (InterruptedException ex)
+                {
+                    System.out.println("Something went wrong with the progress bar \n" + ex);
                 }
-            }.start();
-        }
-        
+            }
+        }.start();
     }//GEN-LAST:event_indexSearchButtonActionPerformed
 
     /**
@@ -300,6 +293,4 @@ public class UserInterface extends javax.swing.JFrame {
     private javax.swing.JLabel searchKeyWordLabel;
     // End of variables declaration//GEN-END:variables
 
-   
-    
 }
