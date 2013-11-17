@@ -43,7 +43,6 @@ public class CrawlerEngine implements java.io.Serializable {
     // Global Variables
     private String topic = "";
     private int _currentDepth = 0;
-    private boolean _done;
 
     private SearchHashMap documentHashMap = new SearchHashMap();
     private HashMap<String, LinkedList<URL>> topicHashMap = new HashMap();
@@ -80,7 +79,7 @@ public class CrawlerEngine implements java.io.Serializable {
         knownURLs = new Hashtable();
         newURLs = new Vector();
         _currentDepth = 0;
-        _done = false;
+
 
         if (argv.length == 0) {
             System.out.println("\n\nNo starting URL Provided. Correct Usage::");
@@ -533,9 +532,7 @@ public class CrawlerEngine implements java.io.Serializable {
 
                     if (page.length() != 0) {
                         ProcessPage(url, page);
-                        if (_currentDepth >= 20) {
-                            Cache.writeObject(documentHashMap.getHashMap(), "documentCache");
-                        }
+                       
                     }
 
                     if (newURLs.isEmpty()) {
@@ -548,7 +545,6 @@ public class CrawlerEngine implements java.io.Serializable {
             } // for
 
             System.out.println("Search complete.");
-            _done = true;
             Cache.writeObject(documentHashMap.getHashMap(), "documentCache");
             Cache.writeObject(topicHashMap, "indexCache");
         } // if
@@ -587,16 +583,4 @@ public class CrawlerEngine implements java.io.Serializable {
 
         }//if
     }//addTopic Method
-
-    public int getMaxDepth() {
-        return maxDepth;
-    }//getMaxdepth
-
-    public boolean isDone() {
-        return _done;
-    }//isDone
-
-    public int getCurrentDepth() {
-        return 0;
-    }//getCurrentDepth
 }

@@ -28,7 +28,7 @@ public class UserInterface extends javax.swing.JFrame {
     public UserInterface() {
         initComponents();
         this.jPanel1.setVisible(true);
-        
+        documentCache  = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
         indexCache  = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
 
     }
@@ -184,7 +184,7 @@ public class UserInterface extends javax.swing.JFrame {
     private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_documentSearchButtonActionPerformed
         output.setText("");
         progressBar.setValue(0);
-        
+        keyWord = keyWordField.getText().toLowerCase();
         if (keyWord == null || keyWord.equals("")) {
             System.out.println("Please enter a key word to search");
         } else {
@@ -205,7 +205,7 @@ public class UserInterface extends javax.swing.JFrame {
                             int j = 0, progress = 0;
                             for (URL url : set)
                             {
-                                sleep(60);
+                                sleep(100);
                                 document = url.toString().substring(url.toString().lastIndexOf("/")+1);
                                 progress = (j+1) * 100/set.size();
                                 progressBar.setValue(progress);
@@ -235,6 +235,7 @@ public class UserInterface extends javax.swing.JFrame {
     }//GEN-LAST:event_documentSearchButtonActionPerformed
 
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexSearchButtonActionPerformed
+        keyWord = keyWordField.getText().toLowerCase();
         if (keyWord == null || keyWord.equals("")) {
             System.out.println("Please enter a key word to search");
         } else {
