@@ -655,20 +655,23 @@ public class CrawlerEngine implements java.io.Serializable
      */
     public void addString(String word, URL url)
     {
-        word = word.toLowerCase();
-        Set<URL> set = new HashSet();
-        if (documentHashMap.containsKey(word))
+        if (!url.toString().endsWith(".com"))
         {
-            set = documentHashMap.get(word);
-            if (!(set.contains(url)))
+            word = word.toLowerCase();
+            Set<URL> set = new HashSet();
+            if (documentHashMap.containsKey(word))
+            {
+                set = documentHashMap.get(word);
+                if (!(set.contains(url)))
+                {
+                    set.add(url);
+                }
+
+            } else
             {
                 set.add(url);
             }
-
-        } else
-        {
-            set.add(url);
+            documentHashMap.put(word, set);
         }
-        documentHashMap.put(word, set);
     }
 }
