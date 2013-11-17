@@ -513,7 +513,7 @@ public class CrawlerEngine implements java.io.Serializable {
      *********************************************************************************************
      */
     public void Crawl() {
-        String[] argv = {"http://textfiles.com", "10"};
+        String[] argv = {"http://textfiles.com", "20"};
         if (Initialize(argv)) {
             for (int i = 0; i < maxDepth; i++) {
                 URL url = (URL) newURLs.elementAt(0);
@@ -533,7 +533,11 @@ public class CrawlerEngine implements java.io.Serializable {
 
                     if (page.length() != 0) {
                         ProcessPage(url, page);
+                        if (_currentDepth >= 20) {
+                            Cache.writeObject(documentHashMap.getHashMap(), "documentCache");
+                        }
                     }
+
                     if (newURLs.isEmpty()) {
                         break;
                     }

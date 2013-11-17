@@ -17,7 +17,7 @@ import java.util.Set;
 public class IndexSearch {
     private String topic;
     public IndexSearch(String topic){
-        this.topic = topic;
+        this.topic = topic.toLowerCase();
     }
     private Boolean emptyKeyWord() {
         if (topic.trim() == null) {

@@ -17,7 +17,7 @@ public class DocumentSearch {
 
     private String keyword;
     public DocumentSearch(String keyword){
-        this.keyword = keyword;
+        this.keyword = keyword.toLowerCase();
     }
     private Boolean emptyKeyWord() {
         if (keyword.trim() == null) {
