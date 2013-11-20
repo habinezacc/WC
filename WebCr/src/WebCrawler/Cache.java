@@ -13,29 +13,39 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/*
- * 
- * @author habineza
- */
+/******************************************************************
+ *
+ * Cache: class is used to implement caching
+ *
+ * @author Ivy wainaina Concorde Habineza and Vivens Mutangana
+ * @see DocumentSearch
+ * @see IndexSearch
+ *
+ ******************************************************************/
 public class Cache implements Serializable
 {
 
     private HashMap<String, Set<URL>> documentCache;
     private HashMap<String, LinkedList<URL>> indexCache;
 
+    /**********************************************************
+     * This is the constructor for cache class it initialize documentCache and
+     * indexCache
+     *
+     ***********************************************************/
     public Cache()
     {
         this.documentCache = new HashMap<>();
         this.indexCache = new HashMap<>();
     }
 
-    /**
-     * This method return a de-serialize an object from the file.
+    /*******************************************************************************
+     * METHOD: readOject is used to de- serialize an object from the file.
      *
      * @param serialPath The relative path of the serial file containing the
-     * object
-     * @return Object
-     */
+     *
+     * @return Object after being deserialized
+     * ***************************************************************************/
     public static Object readObject(String serialPath)
     {
         Object obj = null;
@@ -78,25 +88,15 @@ public class Cache implements Serializable
         }
     }
 
-    public void loadDocumentHashMap()
-    {
-        documentCache = (HashMap<String, Set<URL>>) readObject("documentCache.ser");
-    }
-
     public HashMap<String, Set<URL>> getDocumentHashMap()
     {
-        loadDocumentHashMap();
+        documentCache = (HashMap<String, Set<URL>>) readObject("DocumentCache.ser");
         return documentCache;
-    }
-
-    private void loadIndexHashMap()
-    {
-        indexCache = (HashMap<String, LinkedList<URL>>) readObject("indexCache.ser");
     }
 
     public HashMap<String, LinkedList<URL>> getIndexCache()
     {
-        loadIndexHashMap();
+        indexCache = (HashMap<String, LinkedList<URL>>) readObject("indexCache.ser");
         return indexCache;
     }
 }

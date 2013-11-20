@@ -4,29 +4,35 @@ GENERAL USAGE NOTES
 -----------------------
 - The files and folders are structured as the following tree structure: 
   src/
-     crawler/
+     WebCraler/
         -CrawlerEngine.java
-        -SearchHashMap.java
-     gui/
-        -Canvas.java
-     webcr/
-        -HashSerializer.java
-        -WebCr.java
-     javadoc/
-        ...
+        -Cache.java
+        -UserInterface.java
+	-IndexSearch.java
+	-DocumentSearch.java
+        -Main.java
+
+     
      run.bat
+     DocumentCache.ser
+     indexCache.ser
      run.sh
      README.tct
      
     dist
        WebCr.jar
+       javadoc/
+       		index.html
+		...
 
 - This program implements the webcrawler to help search for an a string keyword from the website www.textfiles.com
   there are the index search and the document search, and both are implemented using various data hash maps, linked lists, set and arrays.
 
 Requirements
 ----------------
-Java 1.6.0 or higher
+	Internet connection
+	Java 1.6.0 or higher
+
 
 Launching the Program
 ---------------------------------

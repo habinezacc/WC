@@ -1,11 +1,16 @@
 package WebCrawler;
 
+import java.util.*;
+import java.net.*;
+import java.io.*;
+
 /**
  * **********************************************************************************************************
  *
  *
- * Course:	17630 - Computer Science Principles for Practicing Engineers
- * Project:The Web Crawler
+ *
+ * Project:The Web Crawler Course:	17630 - Computer Science Principles for
+ * Practicing Engineers
  *
  * @author: Anthony J. Lattanze
  * @version: 1.0 - July 1, 2008 CO-AUTHORS: This code has been co-authored for
@@ -34,9 +39,6 @@ package WebCrawler;
  *
  **************************************************************************************************************
  */
-import java.util.*;
-import java.net.*;
-import java.io.*;
 
 public class CrawlerEngine implements java.io.Serializable
 {
@@ -201,7 +203,7 @@ public class CrawlerEngine implements java.io.Serializable
         {
             try (InputStream urlRobotStream = urlRobot.openStream())
             {
-                byte b[] = new byte[1000];
+                byte b[] = new byte[10000];
                 int numRead = urlRobotStream.read(b);
                 strCommands = new String(b, 0, numRead);
 
@@ -417,7 +419,9 @@ public class CrawlerEngine implements java.io.Serializable
             if (url.toString().charAt(dotIndex - 4) == '.' && !(url.toString().contains("htm")))
             {
                 storeDocument(url, content);
+
                 numPages++;
+               
 
                 /*if (numPages % 10 == 0 && numPages > 0)
                  {
@@ -580,7 +584,7 @@ public class CrawlerEngine implements java.io.Serializable
     {
         String[] argv =
         {
-            "http://textfiles.com", "10"
+            "http://textfiles.com", "20"
         };
         if (Initialize(argv))
         {
@@ -665,8 +669,4 @@ public class CrawlerEngine implements java.io.Serializable
         }//if
     }//addTopic Method
 
-    public boolean isDone()
-    {
-        return _done;
-    }
 }

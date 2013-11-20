@@ -1,17 +1,17 @@
 package WebCrawler;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
-/**
+/********************************************************************************************
+ * UserInterface Class is used to create a GUI that display the results in
+ * search area
  *
- * @author chabineza
+ * @author Vivens Mutangana and Concorde Habineza and Ivy Wainaina
+ *
+ *******************************************************************************************
  */
 public class UserInterface extends javax.swing.JFrame
 {
@@ -24,6 +24,10 @@ public class UserInterface extends javax.swing.JFrame
     private HashMap<String, LinkedList<URL>> indexCache;
     private String keyWord;
 
+    /****************************************************
+     * This is the constructor for this class
+     * *********************************************************
+     */
     public UserInterface()
     {
         initComponents();
@@ -45,17 +49,18 @@ public class UserInterface extends javax.swing.JFrame
         documentSearchButton = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
         keyWordField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        seachResults = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         output = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
         Label = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0));
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(802, 450));
+        setPreferredSize(new java.awt.Dimension(802, 650));
 
-        searchKeyWordLabel.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        searchKeyWordLabel.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
         searchKeyWordLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         searchKeyWordLabel.setText("Search String:");
         searchKeyWordLabel.setFocusCycleRoot(true);
@@ -90,38 +95,34 @@ public class UserInterface extends javax.swing.JFrame
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(indexSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
-                        .addComponent(documentSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(54, 54, 54))
+                        .addComponent(documentSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(63, 63, 63))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 15, Short.MAX_VALUE)
-                        .addComponent(documentSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(indexSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(documentSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(indexSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         keyWordField.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
 
-        jLabel1.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
-        jLabel1.setText("Search Results:");
+        seachResults.setFont(new java.awt.Font("Cambria", 0, 18)); // NOI18N
+        seachResults.setText("Search Results:");
 
         output.setColumns(20);
         output.setRows(5);
+        output.setMinimumSize(new java.awt.Dimension(40000000, 22000000));
+        output.setPreferredSize(new java.awt.Dimension(164, 188));
         jScrollPane2.setViewportView(output);
 
-        jLabel3.setFont(new java.awt.Font("Cambria", 1, 24)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Cambria", 1, 18)); // NOI18N
         jLabel3.setText("ABCOMPUTER MUSEUM SEARCH ENGINE");
 
         Label.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
@@ -131,52 +132,56 @@ public class UserInterface extends javax.swing.JFrame
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(71, 71, 71))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
                                 .addComponent(searchKeyWordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
-                                .addComponent(keyWordField, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(26, 26, 26)
+                                .addComponent(keyWordField, javax.swing.GroupLayout.PREFERRED_SIZE, 484, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(226, 226, 226)
+                                .addComponent(seachResults, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(8, 8, 8)
                                 .addComponent(Label, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 14, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(71, 71, 71)))
+                        .addGap(0, 14, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel3)
-                .addGap(26, 26, 26)
+                .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(keyWordField, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchKeyWordLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(7, 7, 7))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(keyWordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchKeyWordLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(Label, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(4, 4, 4)))
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(seachResults)
+                    .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -186,20 +191,34 @@ public class UserInterface extends javax.swing.JFrame
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    /****************************************************************************************
+     * METHOD: documentSearchButtonActionPerformed is used to perform action
+     * when user click on document search button
+     *
+     * @param evt event parameter genereted when the button is clicked
+ ******************************************************************************************
+     */
     private void documentSearchButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_documentSearchButtonActionPerformed
     {//GEN-HEADEREND:event_documentSearchButtonActionPerformed
         output.setText("");
-        documentCache = (HashMap<String, Set<URL>>) Cache.readObject("documentCache.ser");
+        documentCache = (HashMap<String, Set<URL>>) Cache.readObject("DocumentCache.ser");
         keyWord = keyWordField.getText().toLowerCase();
+        Label.setText("");
         DocumentSearch docSearch = new DocumentSearch(keyWord, documentCache, output, Label, progressBar);
         docSearch.search();
     }//GEN-LAST:event_documentSearchButtonActionPerformed
 
+     /*****************************************************************************************
+ *  METHOD: indextSearchButtonActionPerformed is used to perform action when user click on 
+ * index search button
+ * @param evt event parameter genereted when the button is clicked
+ *******************************************************************************************/
     private void indexSearchButtonActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_indexSearchButtonActionPerformed
     {//GEN-HEADEREND:event_indexSearchButtonActionPerformed
         output.setText("");
         indexCache = (HashMap<String, LinkedList<URL>>) Cache.readObject("indexCache.ser");
         keyWord = keyWordField.getText().toLowerCase();
+        Label.setText("");
         IndexSearch indexSearch = new IndexSearch(keyWord, indexCache, output, Label, progressBar);
         indexSearch.search();
     }//GEN-LAST:event_indexSearchButtonActionPerformed
@@ -212,13 +231,14 @@ public class UserInterface extends javax.swing.JFrame
     private javax.swing.JButton documentSearchButton;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JButton indexSearchButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField keyWordField;
     private javax.swing.JTextArea output;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JLabel seachResults;
     private javax.swing.JLabel searchKeyWordLabel;
     // End of variables declaration//GEN-END:variables
 

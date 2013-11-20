@@ -1,16 +1,22 @@
 package WebCrawler;
 
-/*
- * The is the main class of the project. 
- * and open the template in the editor.
+/*******************************************************************************
+ * Main class is used to display the results of search of the crawler engine
+ *
+ * @see UserInterface
+ * @see CrawlerEngine
+ ********************************************************************************
  */
 public class Main extends Thread
 {
 
     /**
-     * the main sub routing call the user interface and then proceed with
+     * ****************************************************************************8
+     * Main method is used to display the results of search by calling user
+     * interface and crawler engine
      *
      * @param args the command line arguments
+     ****************************************************************************
      */
     public static void main(String args[])
     {
