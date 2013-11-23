@@ -37,7 +37,7 @@ public class DocumentSearch
     public DocumentSearch(String keyword, HashMap<String, Set<URL>> searchMap, JTextArea output, JLabel Label, JProgressBar progressBar)
     {
         
-        this.SEARCH_MAP=searchMap;
+        this.SEARCH_MAP = searchMap;
         this.OUTPUT = output;
         this.LABEL = Label;
         this.PROGRESS_BAR = progressBar;
