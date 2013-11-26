@@ -107,12 +107,12 @@ public class IndexSearch
                                 if (PROGRESS_BAR.getValue() < 100)
                                 {
                                     LABEL.setText("Please wait while searching...");
-                                    OUTPUT.append(name + "  ===>  " + url.toString() + "\n");
+                                    OUTPUT.append(name + "\t===>  " + url.toString() + "\n");
                                     j++;
                                 } else
                                 {
                                     LABEL.setText("Search complete");
-                                    OUTPUT.append(name + "  ===>  " + url.toString() + "\n");
+                                    OUTPUT.append(name + "\t===>  " + url.toString() + "\n");
                                     j++;
                                 }
                             }

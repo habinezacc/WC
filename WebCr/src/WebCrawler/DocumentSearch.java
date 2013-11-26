@@ -124,12 +124,12 @@ public class DocumentSearch
                                 if (PROGRESS_BAR.getValue() < 100)
                                 {
                                     LABEL.setText("Please wait while searching...");
-                                    OUTPUT.append(document + "  ===>  " + url.toString() + "\n");
+                                    OUTPUT.append(document + "\t ===>  " + url.toString() + "\n");
                                     j++;
                                 } else
                                 {
                                     LABEL.setText("Search complete");
-                                    OUTPUT.append(document + "  ===>  " + url.toString() + "\n");
+                                    OUTPUT.append(document + "\t ===>  " + url.toString() + "\n");
                                     j++;
                                 }
                             }

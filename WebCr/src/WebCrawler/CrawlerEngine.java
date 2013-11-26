@@ -39,7 +39,6 @@ import java.io.*;
  *
  **************************************************************************************************************
  */
-
 public class CrawlerEngine implements java.io.Serializable
 {
 
@@ -48,8 +47,10 @@ public class CrawlerEngine implements java.io.Serializable
     private int numPages = 0; //number of pages that are loader and stored in the hash map
     private boolean _done = false;
 
-    private HashMap<String, Set<URL>> documentHashMap = new HashMap();
-    private HashMap<String, LinkedList<URL>> topicHashMap = new HashMap();
+    private static HashMap<String, Set<URL>> documentHashMap;
+    private static HashMap<String, LinkedList<URL>> topicHashMap;
+    private static Vector newURLs;			// This is a list of URLs to be searched
+    private static Hashtable knownURLs;		// This table contains the list of known URLs
     public String results = new String();
     public static final int MAX_PAGES = 20;		// Default maxiumum pages
     public static final boolean DEBUG = false;		// This can be used to enable or disable
@@ -57,11 +58,8 @@ public class CrawlerEngine implements java.io.Serializable
     public static final String DISALLOW = "Disallow:";					// String used in RobotSafe method to
     // determine if page crawling is disallowed
     public static final int MAX_FILE_SIZE = 20000;	// Max size of file
-    // Global Data Structures
-    Vector newURLs;			// This is a list of URLs to be searched
-    Hashtable knownURLs;		// This table contains the list of known URLs
-    int maxDepth;		        // This is the maximum number of pages to crawl
 
+    //int maxDepth;		        // This is the maximum number of pages to crawl
     /**
      * ***********************************************************************************
      *
@@ -78,15 +76,42 @@ public class CrawlerEngine implements java.io.Serializable
      *
      **************************************************************************************
      */
-    public boolean Initialize(String[] argv)
+    public boolean Initialize(String webLink)
     {
         URL url;
-        knownURLs = new Hashtable();
-        newURLs = new Vector();
+        if (Cache.isFileEmpty("knownURLs.ser"))
+        {
+            knownURLs = new Hashtable();
+        } else
+        {
+            knownURLs = (Hashtable) Cache.readObject("knownURLs.ser");
+        }
+        if (Cache.isFileEmpty("newURLs.ser"))
+        {
+            newURLs = new Vector();
+        } else
+        {
+            newURLs = (Vector) Cache.readObject("newURLs.ser");
+        }
+        if (Cache.isFileEmpty("DocumentCache.ser"))
+        {
+        
+            documentHashMap = new HashMap<String, Set<URL>>();
+        } else
+        {
+            documentHashMap =  Cache.getDocumentHashMap();
+        }
+        if (Cache.isFileEmpty("indexCache.ser"))
+        {
+            topicHashMap = new HashMap<String, LinkedList<URL>>();
+        } else
+        {
+            topicHashMap = Cache.getIndexCache();
+        }
         numPages = 0;
         _done = false;
 
-        if (argv.length == 0)
+        if (webLink.length() == 0)
         {
             System.out.println("\n\nNo starting URL Provided. Correct Usage::");
             System.out.println("\njava CrawlerEngine <starting URL> [number of pages]");
@@ -101,12 +126,11 @@ public class CrawlerEngine implements java.io.Serializable
 
         try
         {
-            url = new URL(argv[0]);
+            url = new URL(webLink);
 
         } catch (MalformedURLException e)
         {
-
-            System.out.println("\n\nInvalid starting URL " + argv[0]);
+            System.out.println("\n\nInvalid starting URL " + webLink);
             System.out.println("\n\nValid URLs start with 'http://www...' and so on. You may also");
             System.out.println("specify the number of pages to search as an optional second argument.");
 
@@ -114,34 +138,26 @@ public class CrawlerEngine implements java.io.Serializable
 
         } // try
 
-        knownURLs.put(url, new Integer(1));
+        knownURLs.put(url,
+                new Integer(1));
         newURLs.addElement(url);
 
-        if (argv.length > 1)
-        {
-
-            System.out.println("argv[1] = " + argv[1]);
-            int iPages = Integer.parseInt(argv[1]);
-            System.out.println("iPages = " + Integer.parseInt(argv[1]));
-            maxDepth = iPages;
-
-        } else
-        {
-
-            maxDepth = MAX_PAGES;
-
-        } // if
-
-        System.out.println("Starting crawl with initial URL:: " + url.toString());
-        System.out.println("Maximum number of pages::" + maxDepth);
+        System.out.println(
+                "Starting crawl with initial URL:: " + url.toString());
+       // System.out.println("Maximum number of pages::" + maxDepth);
 
         //Set the proxy and port - important for firewalls
         Properties props = new Properties(System.getProperties());
-        props.put("http.proxySet", "true");
-        props.put("http.proxyHost", "webcache-cup");
-        props.put("http.proxyPort", "8080");
+
+        props.put(
+                "http.proxySet", "true");
+        props.put(
+                "http.proxyHost", "webcache-cup");
+        props.put(
+                "http.proxyPort", "8080");
 
         Properties newprops = new Properties(props);
+
         System.setProperties(newprops);
 
         return true;
@@ -314,12 +330,9 @@ public class CrawlerEngine implements java.io.Serializable
                 {
                     dotIndex = url.toString().length() - 4;
                     LoadPage(url);
-                    if (url.toString().charAt(dotIndex) == '.' && !(url.toString().contains("htm")))
-                    {
-
-                    }
                     knownURLs.put(url, new Integer(1));
                     newURLs.addElement(url);
+
                     System.out.println("Found new URL " + url.toString());
                 }// if
             } // if
@@ -398,7 +411,7 @@ public class CrawlerEngine implements java.io.Serializable
             // OK, now we will read in the entire file or page pointed by "url."
             // There is a maximum file size that can be read in that is established
             // by MAX_FILE_SIZE.
-            byte b[] = new byte[1000];
+            byte b[] = new byte[10000];
             int numRead = urlStream.read(b);
             String content = new String(b, 0, numRead);
 
@@ -419,22 +432,19 @@ public class CrawlerEngine implements java.io.Serializable
             if (url.toString().charAt(dotIndex - 4) == '.' && !(url.toString().contains("htm")))
             {
                 storeDocument(url, content);
-
                 numPages++;
-               
 
-                /*if (numPages % 10 == 0 && numPages > 0)
-                 {
-                 Cache.writeObject(documentHashMap, "documentCache");
-                 Cache.writeObject(topicHashMap, "indexCache");
-                 System.out.println("======================================" + numPages);
-                 }*/
+                if (numPages % 10 == 0 && numPages > 0)
+                {
+                    Cache.writeObject(documentHashMap, "documentCache");
+                    Cache.writeObject(topicHashMap, "indexCache");
+
+                }
             }
             return content;
 
         } catch (IOException e)
         {
-
             System.out.println("ERROR: couldn't open URL ");
             return "";
 
@@ -548,6 +558,7 @@ public class CrawlerEngine implements java.io.Serializable
                         }
                         String newUrlString = page.substring(iURL, iEnd);
                         AddNewUrl(url, newUrlString);
+                        Cache.writeObject(topicHashMap, "indexCache");
                     } // if
                 } // if
             } // if
@@ -582,13 +593,10 @@ public class CrawlerEngine implements java.io.Serializable
      */
     public void Crawl()
     {
-        String[] argv =
+        String link = "http://textfiles.com";
+        if (Initialize(link))
         {
-            "http://textfiles.com", "20"
-        };
-        if (Initialize(argv))
-        {
-            for (int i = 0; i < maxDepth; i++)
+            while (!newURLs.isEmpty())
             {
                 URL url = (URL) newURLs.elementAt(0);
                 newURLs.removeElementAt(0);
@@ -608,14 +616,20 @@ public class CrawlerEngine implements java.io.Serializable
 
                     if (page.length() != 0)
                     {
+                        
                         ProcessPage(url, page);
-
+                        
+                        
                     }
 
                     if (newURLs.isEmpty())
                     {
                         break;
                     }
+                    Cache.writeObject(documentHashMap, "DocumentCache");
+                    Cache.writeObject(newURLs, "newURLs");
+                    Cache.writeObject(knownURLs, "knownURLs");
+
                 } else
                 {
                     System.out.println("URL Disallowed::" + url.toString());
@@ -624,14 +638,12 @@ public class CrawlerEngine implements java.io.Serializable
             } // for
 
             System.out.println("Search complete.");
+            saveAll();
             _done = true;
-            Cache.writeObject(documentHashMap, "documentCache");
-            Cache.writeObject(topicHashMap, "indexCache");
         } // if
     }//Crawl
 
-    /**
-     * **************************************************************************************
+    /****************************************************************************************
      *
      * METHOD: addTopic(String topic, URL url
      *
@@ -643,8 +655,7 @@ public class CrawlerEngine implements java.io.Serializable
      * Purpose : This method is used to add topic in hashMap of topic
      *
      * @return void
-     * **************************************************************************************
-     */
+     * ***************************************************************************************/
     private void addTopic(String topicName, URL url)
     {
         if (topicName.toString().indexOf(".") == -1
@@ -669,4 +680,55 @@ public class CrawlerEngine implements java.io.Serializable
         }//if
     }//addTopic Method
 
+    /****************************************************************************************
+     *
+     * METHOD: loadTopics()
+     *
+     * @author V. Mutangana, I. Wainaina, C. Habineza
+     *
+     * Purpose : This method is used to return the hashMap of topics so that we can load it in the UserInterface to search 
+     * topics and sub-topics. 
+     *
+     * @return HashMap
+     * ***************************************************************************************/
+    public static HashMap loadTopics()
+    {
+        return topicHashMap;
+    }//en of loadTopics
+    
+    /****************************************************************************************
+     *
+     * METHOD: loadDocuments()
+     *
+     * @author V. Mutangana, I. Wainaina, C. Habineza
+     *
+     * Purpose : This method is used to return the hashMap of documents and their contents so that we can load it in the UserInterface to search 
+     * keywords
+     *
+     * @return HashMap
+     * ***************************************************************************************/
+
+    public static HashMap loadDocuments()
+    {
+        return documentHashMap;
+    } //end of loadDocuments
+    
+    /****************************************************************************************
+     *
+     * METHOD: saveAll()
+     *
+     * @author V. Mutangana, I. Wainaina, C. Habineza
+     *
+     * Purpose : This method is used serialize into objects of the content of three hash maps, one for documents, the other one for known URLs the other for the topics, 
+     * and the vector for the new URLs. The objects are saved to disc as files and loaded later when the program starts again
+     *
+     * ***************************************************************************************/
+
+    public static void saveAll()
+    {
+        Cache.writeObject(newURLs, "newURLs");
+        Cache.writeObject(knownURLs, "knownURLs");
+        Cache.writeObject(documentHashMap, "DocumentCache");
+        Cache.writeObject(topicHashMap, "indexCache");
+    }// end of saveAll
 }
