@@ -330,6 +330,7 @@ public class CrawlerEngine implements java.io.Serializable
                 {
                     dotIndex = url.toString().length() - 4;
                     LoadPage(url);
+                    
                     knownURLs.put(url, new Integer(1));
                     newURLs.addElement(url);
 
@@ -616,17 +617,14 @@ public class CrawlerEngine implements java.io.Serializable
 
                     if (page.length() != 0)
                     {
-                        
                         ProcessPage(url, page);
-                        
-                        
-                    }
+                        Cache.writeObject(documentHashMap, "DocumentCache");
+                     }
 
                     if (newURLs.isEmpty())
                     {
                         break;
                     }
-                    Cache.writeObject(documentHashMap, "DocumentCache");
                     Cache.writeObject(newURLs, "newURLs");
                     Cache.writeObject(knownURLs, "knownURLs");
 

@@ -59,17 +59,6 @@ public class UserInterface extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ABCOMPUTER MESEUM");
         setPreferredSize(new java.awt.Dimension(802, 650));
-        addWindowListener(new java.awt.event.WindowAdapter()
-        {
-            public void windowClosed(java.awt.event.WindowEvent evt)
-            {
-                formWindowClosed(evt);
-            }
-            public void windowClosing(java.awt.event.WindowEvent evt)
-            {
-                formWindowClosing(evt);
-            }
-        });
 
         searchKeyWordLabel.setFont(new java.awt.Font("Cambria", 0, 14)); // NOI18N
         searchKeyWordLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -165,10 +154,10 @@ public class UserInterface extends javax.swing.JFrame
                         .addGap(0, 14, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(288, 288, 288)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(291, 291, 291))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,36 +221,8 @@ public class UserInterface extends javax.swing.JFrame
         IndexSearch indexSearch = new IndexSearch(keyWord, indexCache, output, Label, progressBar);
         indexSearch.search();
     }//GEN-LAST:event_indexSearchButtonActionPerformed
-     /*****************************************************************************************
-     * METHOD: formWindowClosed is used to perform action when
-     * user has confirmed to close the program window. It save all the data structures that contain the crawler state information
-     *
-     * @param evt event parameter generated when the OK button is clicked
-     * ******************************************************************************************/
-    private void formWindowClosed(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosed
-    {//GEN-HEADEREND:event_formWindowClosed
-        CrawlerEngine.saveAll();
-    }//GEN-LAST:event_formWindowClosed
-    
-    /*****************************************************************************************
-     * METHOD: formWindowClosing is used to perform action when
-     * user click on close button. It check whether the user really wants to exit the program
-     *
-     * @param evt event parameter generated when the button is clicked
-     * ******************************************************************************************/
-    private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
-    {//GEN-HEADEREND:event_formWindowClosing
-        int i = JOptionPane.showConfirmDialog(ui,
-                        "Are you sure to exit?", "Closing The Program",
-                        JOptionPane.YES_NO_OPTION);
-                if (i == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                }
-                else{
-                    ui.setDefaultCloseOperation(UserInterface.DO_NOTHING_ON_CLOSE);
-                }
-    }//GEN-LAST:event_formWindowClosing
 
+   
 
     /**
      * @param args the command line arguments
